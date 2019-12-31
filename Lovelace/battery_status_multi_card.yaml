@@ -42,3 +42,48 @@ entities:
 show_header_toggle: false
 title: Controllo Batterie Xiaomi
 type: entities
+
+############################################################
+# Bar Card
+cards:
+  - card:
+      attribute: battery_level
+      bar_style:
+        border-radius: 20px
+      card_style:
+        box-shadow: 0 0
+      columns: 1
+      height: 15px
+      indicator_style:
+        border-radius: 20px
+      padding: 0px 15px 3px 15px
+      rounding: 10px
+      saturation: 50%
+      severity:
+        - color: '#fa0505'
+          value: 10
+        - color: '#fa6b05'
+          value: 35
+        - color: '#fab905'
+          value: 50
+        - color: '#ddfa05'
+          value: 75
+        - color: '#40bf40'
+          value: 100
+      title_position: left
+      type: 'custom:bar-card'
+      unit_of_measurement: '%'
+      width: 60%
+    filter:
+      exclude:
+        - entity_id: sensor.humidity_*
+        - entity_id: sensor.pressure_*
+        - entity_id: sensor.illumination_*
+        - entity_id: switch.plug_*
+        - entity_id: sensor.salotto_humidity
+      include:
+        - attributes:
+            battery_level: <=100
+    type: 'custom:auto-entities'
+title: Battery Status
+type: 'custom:vertical-stack-in-card'
