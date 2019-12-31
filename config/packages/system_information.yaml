@@ -1,0 +1,52 @@
+########################################################################
+### Monitor di Sistema
+########################################################################
+sensor: 
+- platform: systemmonitor
+  resources:
+    - type: disk_free
+      arg: /home
+    - type: disk_use_percent
+      arg: /
+    - type: memory_free    
+    - type: processor_use
+    - type: last_boot
+    - type: memory_use_percent
+    - type: network_in
+      arg: 'Local Area Connection'    
+    - type: network_in
+      arg: eth0  
+    - type: network_out
+      arg: eth0 
+    - type: ipv4_address
+      arg: eth0
+    - type: packets_in
+      arg: eth0
+    - type: packets_out 
+      arg: eth0
+    - type:  process 
+      arg: octave-cli 
+      
+- platform: uptime
+  name: Time Online
+  unit_of_measurement: hours 
+
+- platform: command_line
+  name: HA Start
+  command: grep 'Home Assistant initialized' home-assistant.log | awk '{ print $6, $7, $8, $9, $10 }'
+
+- platform: command_line
+  name: Time Domain Setup
+  command: grep 'Setup of domain' home-assistant.log | tail  | cut -c-255 |awk '$11 > 5 { print $9, $11 }'  
+
+#- platform: command_line
+#  name: CPU Temp
+#  command: "cat /sys/class/thermal/thermal_zone0/temp"
+#  unit_of_measurement: "°C"
+#  value_template: '{{ value | multiply(0.001) | round(1) }}'
+
+#- platform: template
+#  sensors:
+#    ipchange:
+#      entity_id: sensor.myip
+#      value_template: "{%- if is_state('sensor.myip', '79.13.40.88') -%} False {%- else -%} True {%- endif %}"  

@@ -1,0 +1,149 @@
+homeassistant:
+  customize:
+    automation.attivazione_automatica_deumidificatore_umidita:
+      friendly_name: Attivazione Automatica Unità
+      icon: mdi:air-purifier
+    automation.notifica_umidita:
+      friendly_name: Notifica Umidità Elevata
+      icon: mdi:air-humidifier
+    switch.gestione_umidita:
+      friendly_name: Gestione Umidita
+      icon: mdi:power
+      
+input_boolean:
+  umidita_elevata:
+    name: Umidita Elevata
+    initial: 'off'
+    icon: mdi:water-percent
+
+input_number:
+  umidita:
+    name: Percentuale Umidità Minima
+    mode: box
+    icon: mdi:water-percent
+    min: 20
+    max: 80
+    step: 5
+
+  tempo_umidita:
+    name: Tempo umidità Rilevata
+    mode: box
+    icon: mdi:timelapse
+    min: 1
+    max: 10
+    step: 1
+  
+  accendi_unita_umidita:
+    name: Accendi Unita tra
+    mode: box
+    icon: mdi:av-timer  
+    min: 1
+    max: 10
+    step: 1
+
+  spegni_unita_umidita:
+    name: Spegni Unita tra
+    mode: box
+    icon: mdi:av-timer
+    min: 0
+    max: 60
+    step: 10
+
+automation:
+
+- alias: "Notifica umidità"
+  trigger:
+    - platform: numeric_state
+      entity_id: !secret sensori_umidita
+      above: 0
+      for:
+        minutes: "{{ states('input_number.tempo_umidita')|int }}"
+  condition:
+    condition: and
+    conditions:
+#    - condition: template
+#      value_template: >
+#        {{(trigger.to_state.state) > (states('input_number.umidita'))}}
+    - condition: template
+      value_template: >
+        {{((as_timestamp(now()) - as_timestamp(trigger.from_state.last_changed))/3600*60) > (states('input_number.tempo_umidita')|int) 
+        and (trigger.to_state.state) > (states('input_number.umidita'))}}
+
+    - condition: state
+      entity_id: input_boolean.umidita_elevata
+      state: 'off'
+  action:
+    - service: script.my_notify
+      data_template:
+        title: 'Gestione Umidità'
+        message: "Attenzione, ho rilevato umidità elevata in *{{ trigger.from_state.attributes.friendly_name }}* di *{{ trigger.to_state.state }}%*. Tra *{{ states('input_number.accendi_unita_umidita') }}* minuti accenderó le unità"
+    - service: notify.ios_iphone_di_xxxxxx
+      data_template:
+        title: 'Gestione Umidità'
+        message: "Attenzione, ho rilevato umidità elevata in {{ trigger.from_state.attributes.friendly_name }} di {{ trigger.to_state.state }}%*. Tra {{ states('input_number.accendi_unita_umidita') }} minuti accenderó le unità"
+    - delay:
+        minutes: "{{ states('input_number.accendi_unita_umidita')|int }}" 
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.umidita_elevata
+
+- alias: 'Attivazione automatica deumidificatore umidità'
+  trigger:
+    - platform: state
+      entity_id: input_boolean.umidita_elevata
+      to: 'on'
+  condition: []
+  action:
+    - service: switch.turn_on
+      data:
+        entity_id: switch.presa_j15
+    - service: climate.set_hvac_mode
+      data:
+        entity_id: climate.daikin_m
+        hvac_mode: 'dry'
+    - service: script.my_notify
+      data:
+        title: '*Gestione Umidità*'
+        message: "Accendo l'unità per la deumidificazione."
+    - service: notify.ios_iphone_di_xxxxxx
+      data:
+        title: 'Gestione Umidità'
+        message: "Accendo l'unità per la deumidificazione."
+    - delay:
+        minutes: "{{ states('input_number.spegni_unita_umidita')|int }}"
+    - service: switch.turn_off
+      data:
+        entity_id: switch.presa_j15
+    - service: climate.set_hvac_mode
+      data:
+        entity_id: climate.daikin_m
+        hvac_mode: 'off'
+    - service: script.my_notify
+      data:
+        title: '*Gestione Umidità*'
+        message: 'Umidità in casa stabilita. Spengo il Deumidificatore'
+    - service: notify.ios_iphone_di_xxxxxx
+      data:
+        title: 'Gestione Umidità'
+        message: 'Umidità in casa stabilita. Spengo il Deumidificatore'        
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.umidita_elevata
+        
+switch:
+  - platform: template
+    switches:
+      gestione_umidita:
+        value_template: "{{ is_state('automation.notifica_umidita', 'on') }}"
+        turn_on:
+          service: automation.turn_on
+          data:
+            entity_id: 
+            - automation.notifica_umidita
+            - automation.attivazione_automatica_deumidificatore_umidita
+        turn_off:
+          service: automation.turn_off
+          data:
+            entity_id: 
+            - automation.notifica_umidita
+            - automation.attivazione_automatica_deumidificatore_umidita      
