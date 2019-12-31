@@ -191,3 +191,4 @@ cards:
     image: /local/immagini/lovelace/multipresa/Multipresa.png
     type: picture-elements
 type: horizontal-stack
+
