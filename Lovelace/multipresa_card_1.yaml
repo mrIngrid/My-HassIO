@@ -1,0 +1,193 @@
+cards:
+  - entities:
+      - entity: input_boolean.att_progr_presa
+      - switch.multipresa1_power
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 100%
+        type: divider
+      - entity: input_datetime.multi1_usb_on
+      - entity: input_datetime.multi1_usb_off
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: 2
+          width: 90%
+        type: divider
+      - entity: input_datetime.multi1_sw1_on
+      - entity: input_datetime.multi1_sw1_off
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: 2
+          width: 90%
+        type: divider
+      - entity: input_datetime.multi1_sw2_on
+      - entity: input_datetime.multi1_sw2_off
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: 2
+          width: 90%
+        type: divider
+      - entity: input_datetime.multi1_sw3_on
+      - entity: input_datetime.multi1_sw3_off
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: 2
+          width: 90%
+        type: divider
+      - entity: input_datetime.multi1_sw4_on
+      - entity: input_datetime.multi1_sw4_off
+      - style:
+          background: '#62717b'
+          height: 1px
+          margin-left: auto
+          margin-right: 2
+          width: 90%
+        type: divider
+    type: entities
+  - elements:
+      - entity: switch.presa_usb
+        image: /local/immagini/lovelace/multipresa/lampo.png
+        state_filter:
+          'off': brightness(100%) saturate(0.5) opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 8px gold) opacity(0.8)
+        style:
+          left: 63%
+          top: 26%
+          width: 46%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: switch.multipresa1_power
+        image: /local/immagini/lovelace/multipresa/Tasto Power.png
+        state_filter:
+          'off': opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 1px gold)
+        style:
+          left: 63%
+          top: 11.5%
+          width: 18%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: switch.presa_1
+        image: /local/immagini/lovelace/multipresa/Spina.png
+        state_filter:
+          'off': brightness(100%) saturate(0.5) opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 1px gold)
+        style:
+          left: 75%
+          top: 45%
+          width: 73%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: switch.presa_2
+        image: /local/immagini/lovelace/multipresa/Spina.png
+        state_filter:
+          'off': brightness(100%) saturate(0.5) opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 1px gold)
+        style:
+          left: 75%
+          top: 60.5%
+          width: 73%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: switch.presa_3
+        image: /local/immagini/lovelace/multipresa/Spina.png
+        state_filter:
+          'off': brightness(100%) saturate(0.5) opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 1px gold)
+        style:
+          left: 75%
+          top: 76.5%
+          width: 73%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: switch.presa_4
+        image: /local/immagini/lovelace/multipresa/Spina.png
+        state_filter:
+          'off': brightness(100%) saturate(0.5) opacity(0.0)
+          'on': brightness(110%) drop-shadow(0px 0px 1px gold)
+        style:
+          left: 75%
+          top: 92%
+          width: 73%
+        tap_action:
+          action: toggle
+        type: image
+      - entity: sensor.wi_fi_multipresa
+        style:
+          color: black
+          font-size: 13px
+          left: 64%
+          opacity: 0.8
+          pointer-events: none
+          text-align: center
+          top: 16%
+        type: state-label
+      - entity: sensor.multi1_usb
+        style:
+          color: white
+          font-size: 13px
+          left: 13%
+          opacity: 0.8
+          pointer-events: none
+          text-align: right
+          top: 26%
+        type: state-label
+      - entity: sensor.multi1_sw1
+        style:
+          color: white
+          font-size: 13px
+          left: 13%
+          opacity: 0.8
+          pointer-events: none
+          text-align: right
+          top: 40%
+        type: state-label
+      - entity: sensor.multi1_sw2
+        style:
+          color: white
+          font-size: 13px
+          left: 13%
+          opacity: 0.8
+          pointer-events: none
+          text-align: right
+          top: 56%
+        type: state-label
+      - entity: sensor.multi1_sw3
+        style:
+          color: white
+          font-size: 13px
+          left: 13%
+          opacity: 0.8
+          pointer-events: none
+          text-align: right
+          top: 72%
+        type: state-label
+      - entity: sensor.multi1_sw4
+        style:
+          color: white
+          font-size: 13px
+          left: 13%
+          opacity: 0.8
+          pointer-events: none
+          text-align: right
+          top: 88%
+        type: state-label
+    image: /local/immagini/lovelace/multipresa/Multipresa.png
+    type: picture-elements
+type: horizontal-stack
