@@ -1,0 +1,602 @@
+entities:
+  - elements:
+      - conditions:
+          - entity: group.natural_events
+            state: 'off'
+        elements:
+          - entity: sensor.dark_sky_summary
+            hold_action:
+              action: none
+            style:
+              animation: var(--my-animation)
+              background-color: var(--global-level)
+              border-color: var(--global-level)
+              border-style: solid
+              border-width: var(--my-border-width)
+              color: var(--my-color)
+              font-family: Trebuchet MS
+              font-size: 120%
+              font-weight: bold
+              left: 0%
+              opacity: 0.5
+              pointer-events: auto
+              right: 0%
+              text-align: center
+              top: 95%
+              transform: 'translate(0%,-50%)'
+              z-index: 98
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              service_data:
+                entity_id: input_boolean.natural_events
+            type: state-label
+        type: conditional
+      - conditions:
+          - entity: group.meteoalert
+            state: 'on'
+        elements:
+          - entity: sensor.meteoalarm_level
+            style:
+              '--paper-item-icon-color': var(--meteoalarm-level)
+              left: var(--meteoalarm-level-left)
+              top: 20%
+              z-index: 99
+            type: state-icon
+          - entity: sensor.meteoalarm_type
+            style:
+              '--paper-item-icon-color': var(--meteoalarm-level)
+              left: var(--meteoalarm-type-left)
+              top: 20%
+              z-index: 99
+            type: state-icon
+          - entity: group.meteoalert
+            hold_action:
+              action: none
+            prefix: 'Meteo '
+            style:
+              animation: var(--my-animation)
+              background-color: var(--global-level)
+              border-color: var(--global-level)
+              border-style: solid
+              border-width: var(--my-border-width)
+              color: var(--my-color)
+              font-family: Trebuchet MS
+              font-size: 120%
+              font-weight: bold
+              left: 0%
+              opacity: 0.5
+              pointer-events: auto
+              right: 0%
+              text-align: center
+              top: 5%
+              transform: 'translate(0%,-50%)'
+              z-index: 98
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              service_data:
+                entity_id: input_boolean.natural_events
+            type: state-label
+          - entity: binary_sensor.dpc_temporali_oggi
+            image: /local/hassiohelp/pkg_natural_events/dpc_temporali_oggi.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 1
+            type: image
+          - entity: binary_sensor.dpc_temporali_domani
+            image: /local/hassiohelp/pkg_natural_events/dpc_temporali_domani.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 1
+            type: image
+        type: conditional
+      - conditions:
+          - entity: group.geoalert
+            state: 'on'
+        elements:
+          - entity: group.geoalert
+            hold_action:
+              action: none
+            prefix: 'Geologico '
+            style:
+              animation: var(--my-animation)
+              background-color: var(--global-level)
+              border-color: var(--global-level)
+              border-style: solid
+              border-width: var(--my-border-width)
+              color: var(--my-color)
+              font-family: Trebuchet MS
+              font-size: 120%
+              font-weight: bold
+              left: 0%
+              opacity: 0.5
+              pointer-events: auto
+              right: 0%
+              text-align: center
+              top: 95%
+              transform: 'translate(0%,-50%)'
+              z-index: 98
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              service_data:
+                entity_id: input_boolean.natural_events
+            type: state-label
+          - entity: binary_sensor.dpc_idraulico_oggi
+            image: /local/hassiohelp/pkg_natural_events/dpc_idraulico_oggi.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 2
+            type: image
+          - entity: binary_sensor.dpc_idrogeologico_oggi
+            image: /local/hassiohelp/pkg_natural_events/dpc_idrogeologico_oggi.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 1
+            type: image
+          - entity: binary_sensor.dpc_idraulico_domani
+            image: /local/hassiohelp/pkg_natural_events/dpc_idraulico_domani.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 2
+            type: image
+          - entity: binary_sensor.dpc_idrogeologico_domani
+            image: /local/hassiohelp/pkg_natural_events/dpc_idrogeologico_domani.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 1
+            type: image
+          - entity: binary_sensor.lastquake
+            image: /local/hassiohelp/pkg_natural_events/sisma.png
+            state_filter:
+              'off': opacity(0)
+              'on': opacity(1)
+            style:
+              left: 50%
+              pointer-events: none
+              top: 50%
+              width: 100%
+              z-index: 0
+            type: image
+        type: conditional
+    image: /local/hassiohelp/pkg_natural_events/background.png
+    style: |
+      @keyframes blink {
+        30% {
+          background: {% if is_state('group.natural_events', 'on') %} gray {% endif %};
+        }
+      }
+      ha-card {
+        --my-animation: blink 2s linear 3;
+        --global-level: {% if is_state('group.natural_events', 'on') %} {{states('sensor.natural_events_level')}}; {% else %} Green;{% endif %} 
+        --meteoalarm-level: {{states('sensor.meteoalarm_level')}};
+        --meteoalarm-level-left: {% if (state_attr('binary_sensor.meteoalarm', 'urgency')|lower) == 'immediate' %} 5%; {% else %} 90%; {% endif %}
+        --meteoalarm-type-left: {% if (state_attr('binary_sensor.meteoalarm', 'urgency')|lower) == 'immediate' %} 10%; {% else %} 95%; {% endif %}
+        --my-border-style: solid;
+
+        --my-border-width: {% if is_state('input_boolean.natural_events', 'off') %} 1px; {% else %} 0px; {% endif %}
+        --my-border-color: {% if is_state('group.natural_events', 'on') %} var(--global-level); {% endif %}
+        --my-background: {% if is_state('group.natural_events', 'on') %} var(--global-level); {% else %} Green;{% endif %}
+        --my-color: {% if states('sensor.natural_events_level') in ['White','Yellow'] %} red; {% else %} yellow; {% endif %}
+        {% if is_state('group.natural_events', 'on') %}
+        --my-border-width: {% if is_state('input_boolean.natural_events', 'off') %} 1px; {% else %} 1px 0px 0px 0px; {% endif %}
+        {% else %}
+        --my-border-width: 0px;
+        --my-color: Wihte;
+        {% endif %}
+        border-color: var(--my-border-color);
+        border-style: var(--my-border-style);
+        border-width: var(--my-border-width);
+        background: var(--my-background);
+      }
+    type: 'custom:hui-picture-elements-card'
+  - card:
+      entities:
+        - card:
+            text: TERREMOTO
+            type: 'custom:text-divider-row'
+          filter:
+            include:
+              - entity_id: binary_sensor.lastquake
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            content: >-
+              {% set device_tracker = 'device_tracker.oneplus_5t' %} {% set
+              data_utc = state_attr('binary_sensor.lastquake',
+              'publication_date') %} {% set magnitudo =
+              (state_attr('binary_sensor.lastquake', 'magnitude')|float) if not
+              none else '0' %} {% set code = {0:'White', 1:'Green', 2:'Yellow',
+              3:'Orange', 4:'Red'} %} {% set color =
+              code[state_attr('binary_sensor.lastquake', 'level')|int] %} {% set
+              lat = state_attr('binary_sensor.lastquake', 'latitude') %} {% set
+              lon = state_attr('binary_sensor.lastquake', 'longitude') %} <font
+              color={{color}}>{{as_timestamp(data_utc)|timestamp_custom
+              ('%H:%M:%S del %d-%m-%Y')}}</font>
+
+
+              Un terremoto di magnitudo <font color={{color}}> {{magnitudo}}
+              </font>  è avvenuto nella zona:
+              [{{state_attr('binary_sensor.lastquake',
+              'region')}}](https://www.google.com/maps/search/?api=1&query={{state_attr('binary_sensor.lastquake',
+              'latitude')}},{{state_attr('binary_sensor.lastquake',
+              'longitude')}}) a <font color={{color}}>
+              {{state_attr('binary_sensor.lastquake', 'distance')}} </font> km
+              da casa, con coordinate geografiche (lat, lon) {{lat}}, {{lon}}. 
+
+              Tu ti trovi a {{distance(lat, lon, device_tracker) | round(1) if
+              (lat and lon) is defined else none}} km dall'epicentro.
+
+
+              {% if magnitudo >= 3|int %}
+              [Shakemap]({{state_attr('binary_sensor.lastquake', 'image_url')}})
+              ~ 
+              [PGA](http://shakemap.rm.ingv.it/shake/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}/download/pga.jpg) ~ 
+              [PGV](http://shakemap.rm.ingv.it/shake/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}/download/pgv.jpg) ~ 
+              [TvMap](http://shakemap.rm.ingv.it/shake/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}/download/tvmap.jpg) ~ 
+              [TvMap2](http://shakemap.rm.ingv.it/shake/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}/download/tvmap.jpg) ~ 
+              [HaiSentitoIlTerremoto](http://eventi.haisentitoilterremoto.it/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}/{{state_attr('binary_sensor.lastquake',
+              'short_id')}}_mcs.jpg)
+
+
+              <img style="border: 2px solid {{color}};"
+              src="{{state_attr('binary_sensor.lastquake', 'image_url')}}"/> {%
+              endif %}
+
+
+              [INGV](http://terremoti.ingv.it/) ~ [HaiSentitoIlTerremoto
+              Web](http://www.haisentitoilterremoto.it/)
+            style: >
+              ha-card {background: none; border-radius: 0px; box-shadow: none;
+              color: gray;} .card-content {padding: 0}
+            type: markdown
+          filter:
+            include:
+              - entity_id: binary_sensor.lastquake
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            card:
+              aspect_ratio: 100%
+              dark_mode: true
+              default_zoom: 10
+              entities:
+                - zone.geoalert
+              geo_location_sources:
+                - ingv_centro_nazionale_terremoti
+              style: |
+                ha-card {
+                  border-radius: 0px;
+                  border: solid 1px var(--accent-color); 
+                  box-shadow: none;
+                  margin: 16px;
+                }
+              type: map
+            conditions:
+              - entity: input_select.meteo_iframe
+                state: Posizione Geografica
+            type: conditional
+          conditions:
+            - entity: binary_sensor.lastquake
+              state: 'on'
+          type: 'custom:hui-conditional-card'
+        - card:
+            text: PROTEZIONE CIVILE
+            type: 'custom:text-divider-row'
+          filter:
+            include:
+              - entity_id: '*binary_sensor.dpc_*'
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            content: >
+              {% set color = {0:'White', 1:'Green', 2:'Yellow', 3:'Orange',
+              4:'Red'} %} {% for e in config.entities %}
+
+
+              <font color= {{color[state_attr(e.entity, 'level')|int]}}>
+              <ha-icon icon="{{ 'mdi:numeric-' ~ state_attr(e.entity,
+              'level')|int ~ '-box'}}" style="width: 36px; height:
+              36px;"></ha-icon>  {{state_attr(e.entity, 'friendly_name')}} -
+              {{state_attr(e.entity, 'allerta')}} {{state_attr(e.entity,
+              'info')}}</font> {%- endfor %}
+
+
+              [Protezione Civile](http://www.protezionecivile.it/home) ~
+              [Vigilanza
+              Meteo](http://www.protezionecivile.gov.it/dettaglio/-/journal_content/56/20182/1131180?refererPlid=42041&controlPanelCategory=current_site.content)
+              ~ [Criticità
+              Idro](http://www.protezionecivile.gov.it/attivita-rischi/meteo-idro/attivita/previsione-prevenzione/centro-funzionale-centrale-rischio-meteo-idrogeologico/previsionale/bollettini-criticita/bollettino-odierno)
+              ~ [Radar](http://www.protezionecivile.gov.it/radar-dpc)
+            style: |
+              ha-card {background: none; border-radius: 0px; box-shadow: none;}
+              .card-content {padding: 0}
+            type: markdown
+          filter:
+            include:
+              - attributes:
+                  level: '> 0'
+                entity_id: '*binary_sensor.dpc_*'
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            entities:
+              - text: BURZE
+                type: 'custom:text-divider-row'
+              - card:
+                  content: >-
+                    <font color=
+                    #4caf50>{{state_attr('binary_sensor.burze_storms_nearby',
+                    'number')}}</font><font color= yellow><ha-icon
+                    icon="mdi:flash" style="width: 24px; height: 24px;
+                    transform: rotate(35deg);"></ha-icon></font> in <font color=
+                    #4caf50> {{state_attr('binary_sensor.burze_storms_nearby',
+                    'period')}}</font> minuti. Il più vicino è caduto a <font
+                    color= #4caf50>
+                    {{state_attr('binary_sensor.burze_storms_nearby',
+                    'distance')}} Km </font> a <font color= #4caf50>
+                    {{states('sensor.burze_direction')}} </font> </font> da
+                    casa.
+
+
+                    [Burze](https://burze.dzis.net) ~
+                    [Blitzortung](http://map.blitzortung.org/#5.11/43.00/13.00) 
+                  style: >
+                    ha-card {background: none; border-radius: 0px; box-shadow:
+                    none;}
+                  type: markdown
+                filter:
+                  include:
+                    - entity_id: binary_sensor.burze_storms_nearby
+                      state: 'on'
+                show_empty: false
+                type: 'custom:auto-entities'
+            show_header_toggle: false
+            style: |
+              ha-card {background: none; border-radius: 0px; box-shadow: none;}
+              .card-content {padding: 0;}
+            type: entities
+          filter:
+            include:
+              - entity_id: binary_sensor.burze_storms_nearby
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            text: METEO ALARM
+            type: 'custom:text-divider-row'
+          filter:
+            include:
+              - entity_id: binary_sensor.meteoalarm
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            content: >
+              ## <font color= {{states('sensor.meteoalarm_level')}}> <ha-icon
+              icon="{{state_attr('sensor.meteoalarm_level', 'icon')}}"
+              style="width: 36px; height: 36px;"></ha-icon> </font> <font color=
+              {{states('sensor.meteoalarm_level')}}> <ha-icon
+              icon="{{state_attr('sensor.meteoalarm_type', 'icon')}}"
+              style="width: 36px; height: 36px;"></ha-icon></font> <font color=
+              {{states('sensor.meteoalarm_level')}}>
+              {{state_attr('binary_sensor.meteoalarm', 'event')}} </font><font
+              color= grey> {{state_attr('binary_sensor.meteoalarm', 'urgency')}}
+              </font>
+
+              {% set start = state_attr('binary_sensor.meteoalarm', 'effective')
+              %} {% set end = state_attr('binary_sensor.meteoalarm', 'expires')
+              %} <font><center> {{as_timestamp(start)|timestamp_custom ('Valido
+              dalle ore **%H:%M** del **%d/%m**')}}
+              {{as_timestamp(end)|timestamp_custom (' alle ore **%H:%M** del
+              **%d/%m**')}}</font>
+
+
+              **Titolo**
+
+              <font color= grey> {{state_attr('binary_sensor.meteoalarm',
+              'headline')}} </font>
+
+
+              **Descrizione**
+
+              <font color= grey> {{state_attr('binary_sensor.meteoalarm',
+              'description')}} </font>
+
+
+              **Istruzioni**
+
+              <font color= grey> {{state_attr('binary_sensor.meteoalarm',
+              'instruction')}} </font>
+
+
+              [MeteoAlarm]({{state_attr('binary_sensor.meteoalarm', 'web')}}) 
+            style: |
+              ha-card {background: none; border-radius: 0px; box-shadow: none;}
+            type: markdown
+          filter:
+            include:
+              - entity_id: binary_sensor.meteoalarm
+                state: 'on'
+          show_empty: false
+          type: 'custom:auto-entities'
+        - card:
+            entity: sun.sun
+            state_image:
+              above_horizon: >-
+                https://api.sat24.com/animated/IT/visual/3/Central%20European%20Standard%20Time/3065655'
+                width=845 height=615
+              below_horizon: >-
+                https://api.sat24.com/animated/IT/infraPolair/3/Central%20European%20Standard%20Time/2523464'
+                width=845 height=615
+            style: |
+              ha-card {
+                border-radius: 0px; 
+                border: solid 1px var(--accent-color);
+                box-shadow: none;
+                margin: 16px;
+              }
+            type: picture-entity
+          conditions:
+            - entity: group.natural_events
+              state: 'off'
+          type: 'custom:hui-conditional-card'
+        - card:
+            entities:
+              - entity: input_select.meteo_map
+            entity: input_select.meteo_map
+            hold_action:
+              action: call-service
+              service: input_select.select_previous
+              service_data:
+                entity_id: input_select.meteo_map
+            state_image:
+              Burze: 'https://burze.dzis.net/italia_fulmine_lebhaft_gruppi_ne.gif'
+              Neve: >-
+                https://api.sat24.com/animated/EU/snow/3/Central%20European%20Standard%20Time/4614822'
+                width=845 height=615
+              Nuvole Infrared: >-
+                https://api.sat24.com/animated/IT/infraPolair/3/Central%20European%20Standard%20Time/2523464'
+                width=845 height=615
+              Nuvole e Sole: >-
+                https://api.sat24.com/animated/IT/visual/3/Central%20European%20Standard%20Time/3065655'
+                width=845 height=615
+              Pioggia: >-
+                https://api.sat24.com/animated/IT/rainTMC/3/Central%20European%20Standard%20Time/3872070'
+                width=845 height=615
+              WWLLN: >-
+                https://wwlln.net/WWLLN_movies/Movie_of_Lightning_in_EurAfrica_BIG.gif
+            style: |
+              ha-card {
+                border-radius: 0px; 
+                border: solid 1px var(--accent-color);
+                box-shadow: none;
+                margin: 16px;
+              }
+            tap_action:
+              action: call-service
+              service: input_select.select_next
+              service_data:
+                entity_id: input_select.meteo_map
+            title: Nuvole
+            type: picture-entity
+          conditions:
+            - entity: group.meteoalert
+              state: 'on'
+            - entity: input_select.meteo_map
+              state_not: Nessuna
+          type: 'custom:hui-conditional-card'
+        - card:
+            card:
+              aspect_ratio: 100%
+              dark_mode: true
+              default_zoom: 8
+              entities:
+                - zone.meteoalert
+              geo_location_sources:
+                - wwlln
+              style: |
+                ha-card {
+                  border-radius: 0px;
+                  border: solid 1px var(--accent-color); 
+                  box-shadow: none;
+                  margin: 16px;
+                }
+              type: map
+            conditions:
+              - entity: input_select.meteo_iframe
+                state: Posizione Geografica
+            type: conditional
+          conditions:
+            - entity: binary_sensor.burze_storms_nearby
+              state: 'on'
+          type: 'custom:hui-conditional-card'
+        - card:
+            card:
+              aspect_ratio: 100%
+              style: |
+                ha-card {
+                  border-radius: 0px;
+                  border: solid 1px var(--accent-color); 
+                  box-shadow: none;
+                  margin: 16px;
+                }
+              type: iframe
+              url: >-
+                https://embed.windy.com/embed2.html?lat=42.000&lon=12.000&zoom=5&level=surface&overlay=capAlerts&menu=&type=map&location=coordinates&detail=&detailLat=42.000&detailLon=12.000
+            conditions:
+              - entity: input_select.meteo_iframe
+                state: Windy Alert
+            type: conditional
+          conditions:
+            - entity: group.meteoalert
+              state: 'on'
+          type: 'custom:hui-conditional-card'
+      style: |
+        ha-card {border-radius: 0px; box-shadow: none; background: none;}
+      type: entities
+    conditions:
+      - entity: input_boolean.natural_events
+        state: 'on'
+    type: 'custom:hui-conditional-card'
+style: |
+  ha-card {
+    {% if is_state('input_boolean.natural_events', 'on') and is_state('group.natural_events', 'on') %}
+      border-color: {{states('sensor.natural_events_level')}};
+      border-style: solid;
+      border-width: 0px 1px 1px 1px;
+    {% else %}
+      border-width: 0px;
+    {% endif %}
+      background: --ha-card-background;
+  }
+  .card-content {
+    padding: 0;
+  }
+type: entities
