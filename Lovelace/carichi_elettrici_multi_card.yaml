@@ -1,0 +1,251 @@
+Sonoff Pow R2 Card
+
+entities:
+  - style:
+      background: red
+      height: 1px
+      margin-left: auto
+      margin-right: auto
+      width: 80%
+    type: divider
+  - switch.pow_lavatrice
+  - style:
+      background: red
+      height: 1px
+      margin-left: auto
+      margin-right: auto
+      width: 80%
+    type: divider
+  - entities:
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+      - sensor.pow_lavatrice_energy_apparentpower
+      - sensor.pow_lavatrice_energy_current
+      - sensor.pow_lavatrice_energy_factor
+      - sensor.pow_lavatrice_energy_reactivepower
+      - sensor.pow_lavatrice_energy_today
+      - sensor.pow_lavatrice_energy_total
+      - sensor.pow_lavatrice_energy_totalstarttime
+      - sensor.pow_lavatrice_energy_voltage
+      - sensor.pow_lavatrice_energy_yesterday
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+    head: sensor.pow_lavatrice_energy_power
+    type: 'custom:fold-entity-row'
+name: Lavatrice
+type: entities
+
+#################################################################
+#Shelly EM Card
+entities:
+  - style:
+      background: red
+      height: 1px
+      margin-left: auto
+      margin-right: auto
+      width: 80%
+    type: divider
+  - switch.shellyem_b9ee5c_relay_0
+  - style:
+      background: red
+      height: 1px
+      margin-left: auto
+      margin-right: auto
+      width: 80%
+    type: divider
+  - entities:
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+      - sensor.shellyem_b9ee5c_voltage_1
+      - sensor.shellyem_b9ee5c_energy_1
+      - sensor.shellyem_b9ee5c_reactive_power_1
+      - sensor.shellyem_b9ee5c_returned_energy_1
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+    head: sensor.shellyem_b9ee5c_power_1
+    type: 'custom:fold-entity-row'
+  - entities:
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+      - sensor.shellyem_b9ee5c_voltage_0
+      - sensor.shellyem_b9ee5c_energy_0_2
+      - sensor.shellyem_b9ee5c_reactive_power_0
+      - sensor.shellyem_b9ee5c_returned_energy_0
+      - style:
+          background: red
+          height: 1px
+          margin-left: auto
+          margin-right: auto
+          width: 80%
+        type: divider
+    head: sensor.shellyem_b9ee5c_power_0_2
+    type: 'custom:fold-entity-row'
+name: Shelly EM
+type: entities
+
+####################################################################
+# Controllo Carichi
+cards:
+  - entities:
+      - entity: automation.innesco_controllo_carichi
+        icon: 'mdi:power'
+        name: Controllo carichi Off/On
+      - sensor.potenza_istantanea
+      - sensor.tempo_in_extrasoglia
+      - entity: sensor.ultimo_carico_spento
+      - sensor.ultimo_intervento
+      - input_boolean.notifiche_standard_or_centro_notifiche
+      - entities:
+          - entity: input_text.carico_1
+            tap_action:
+              action: none
+          - entity: input_text.carico_2
+            tap_action:
+              action: none
+          - entity: input_text.carico_3
+            tap_action:
+              action: none
+          - entity: input_text.carico_4
+            tap_action:
+              action: none
+          - entity: input_text.carico_5
+            tap_action:
+              action: none
+          - entity: input_text.carico_6
+            tap_action:
+              action: none
+          - entity: input_text.carico_7
+            tap_action:
+              action: none
+          - entity: input_text.carico_8
+            tap_action:
+              action: none
+          - entity: input_text.carico_9
+            tap_action:
+              action: none
+        head: input_boolean.impostazioni_controllo_carichi
+        type: 'custom:fold-entity-row'
+    show_header_toggle: false
+    title: Controllo Carichi
+    type: entities
+  - card:
+      entities:
+        - input_select.selettore_kw_contatore
+        - input_number.tempo_intervento
+        - input_text.sensore_lettura_potenza_instantanea
+      show_header_toggle: false
+      title: Configurazione contatore
+      type: entities
+    conditions:
+      - entity: input_boolean.impostazioni_controllo_carichi
+        state: 'on'
+    type: conditional
+  - card:
+      entities:
+        - input_boolean.accensione_autmatica_carico
+        - input_select.accensione_automatica_carico
+        - input_text.esclusione_1_riaccensione
+        - input_text.esclusione_2_riaccensione
+      show_header_toggle: false
+      title: Accensione Ultimo carico spento
+      type: entities
+    conditions:
+      - entity: input_boolean.impostazioni_controllo_carichi
+        state: 'on'
+    type: conditional
+  - card:
+      entities:
+        - input_boolean.notifiche_cc
+        - input_text.notifiche_cc
+        - input_boolean.notifiche_cc_google
+        - input_text.notifiche_cc_google
+        - input_boolean.notifiche_cc_alexa
+        - input_text.notifiche_cc_alexa
+      show_header_toggle: false
+      title: Configurazione Notifiche
+      type: entities
+    conditions:
+      - entity: input_boolean.impostazioni_controllo_carichi
+        state: 'on'
+      - entity: input_boolean.notifiche_standard_or_centro_notifiche
+        state: 'off'
+    type: conditional
+type: vertical-stack
+
+#############################################################################
+# Consumi e Costi
+cards:
+  - entities:
+      - entity: sensor.consumo_giornaliero_f1
+        name: Consumo Fascia 1
+      - entity: sensor.costo_consumo_oggi_f1
+        name: Costo Fascia 1
+      - entity: sensor.consumo_giornaliero_f2
+        name: Consumo Fascia 2
+      - entity: sensor.costo_consumo_oggi_f2
+        name: Costo Fascia 2
+      - entity: sensor.consumo_totale_oggi
+        name: Consumo Totale
+      - entity: sensor.costo_consumo_oggi_totale
+        name: Costo Totale
+      - entities:
+          - entity: sensor.consumo_mensile_f1
+            name: Consumo Fascia 1
+          - entity: sensor.costo_consumo_mensile_f1
+            name: Costo Fascia 1
+          - entity: sensor.consumo_mensile_f2
+            name: Consumo Fascia 2
+          - entity: sensor.costo_consumo_mensile_f2
+            name: Costo Fascia 2
+          - entity: sensor.consumo_totale_mensile
+            name: Consumo Totale
+          - entity: sensor.costo_consumo_mensile_totale
+            name: Costo Totale
+        head:
+          label: Consumi e costi mensile
+          type: section
+        type: 'custom:fold-entity-row'
+      - entities:
+          - entity: input_datetime.f1_ora_inizio
+            name: Orario Fascia 1
+          - entity: input_number.costo_f1
+            name: Costo KWh Fascia 1
+          - entity: input_datetime.f2_ora_inizio
+            name: Orario Fascia 2
+          - entity: input_number.costo_f2
+            name: Costo KWh Fascia 2
+          - entity: input_boolean.tariffa_weekend
+            name: Attiva F2 e Tariffa Week end
+        head:
+          label: Parametri
+          type: section
+        type: 'custom:fold-entity-row'
+    show_header_toggle: false
+    title: Panoramica Consumi
+    type: entities
+type: vertical-stack
