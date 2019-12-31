@@ -1,0 +1,69 @@
+    
+shell_command:
+  set_smarther: 'python3 /config/python_scripts/smarther.py {{ states.climate.smarther.attributes.temperature }}'
+
+
+sensor:
+
+  - platform: command_line
+    name: "Temperatura Smarther"
+    command: 'python3 /config/python_scripts/smarther.py 0'
+    value_template: "{{ value_json.chronothermostats[0].thermometer.measures[0].value }}"
+    unit_of_measurement: "°C"
+    scan_interval: 360
+    
+  - platform: command_line
+    name: "Umidità Smarther"
+    command: 'cat /config/dati.json'
+    value_template: "{{ value_json.chronothermostats[0].hygrometer.measures[0].value }}"
+    unit_of_measurement: "%"
+    scan_interval: 5
+    
+  - platform: command_line
+    name: "set temp smarther"
+    command: 'cat /config/dati.json'
+    value_template: "{{ value_json.chronothermostats[0].setPoint.value }}"
+    unit_of_measurement: "%"
+    scan_interval: 5
+    
+  - platform: template
+    sensors:
+      ha_set_temp:
+        unit_of_measurement: '°C'
+        value_template: '{{ states.climate.smarther.attributes.temperature }}'
+
+climate:
+  - platform: generic_thermostat
+    name: Smarther
+    heater: switch.smarther
+    target_sensor: sensor.temperatura_smarther # sensore temperatura smarther
+    precision: 0.1
+    
+automation:    
+- id: '1560548001023'
+  alias: ha_set_temp
+  trigger:
+  - entity_id: sensor.ha_set_temp
+    platform: state
+  condition:
+  - condition: template
+    value_template: '{{ states.sensor.set_temp_smarther.last_updated < states.climate.smarther.last_updated }}'  
+  action:
+  - service: shell_command.set_smarther
+
+- id: '1560465101056'
+  alias: manual_set_temp_smarther 
+  trigger:
+  - entity_id: sensor.set_temp_smarther
+    platform: state
+  condition:
+  - condition: template
+    value_template: '{{ states.sensor.set_temp_smarther.last_updated > states.climate.smarther.last_updated }}'
+  action:
+    - service: climate.set_temperature
+      data_template:
+        entity_id: climate.smarther
+        temperature: '{{ states.sensor.set_temp_smarther.state  }}'
+        
+      
+  

@@ -1,0 +1,276 @@
+homeassistant:
+  customize:
+    switch.moviemode:
+      icon: mdi:movie
+      friendly_name: Scene Automatiche
+    input_datetime.scene_dalle:
+      friendly_name: "Inizio Scena"
+      icon: mdi:clock-start
+    input_datetime.scene_alle:
+      friendly_name: "Fine Scena"
+      icon: mdi:clock-end
+      
+
+switch:
+  platform: template
+  switches:
+    moviemode:
+      value_template: "{{ is_state('automation.moviemode_turn_on', 'on') }}"
+      friendly_name: 'Moviemode'
+      turn_on:
+      - service: automation.turn_on
+        entity_id: 
+        - automation.moviemode_turn_on
+        - automation.moviemode_turn_off
+      turn_off:
+      - service: automation.turn_off
+        entity_id: 
+          - automation.moviemode_turn_on
+          - automation.moviemode_turn_off
+      - service: scene.turn_on
+        entity_id: 
+          - scene.normal 
+
+automation:
+
+- alias: "theater_turn_on"
+  trigger:
+#  - platform: template
+#    value_template: "{% if is_state('media_player.android_tv', 'pause') and is_state_attr('media_player.android_tv', 'app_name', 'Android TV') %}true{% endif %}"
+  - platform: state
+    entity_id: media_player.android_tv
+    from: 'standby'
+    to: 'playing'
+  - platform: state
+    entity_id: media_player.android_tv
+    from: 'idle'
+    to: 'playing' 
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: automation.theater_turn_on
+      state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.ht_power
+  - service: automation.turn_off
+    entity_id: automation.theater_turn_on
+  - service: automation.turn_on
+    entity_id: automation.theater_turn_off
+
+- alias: "theater_turn_off"
+  trigger:
+  - platform: state
+    entity_id: media_player.android_tv
+    from: 'playing'
+    to: 'standby'
+  - platform: state
+    entity_id: media_player.android_tv
+    from: 'paused'
+    to: 'standby'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: automation.theater_turn_off
+      state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.ht_power
+  - service: automation.turn_on
+    entity_id: automation.theater_turn_on
+  - service: automation.turn_off
+    entity_id: automation.theater_turn_off
+    
+    
+- alias: "moviemode_turn_on"
+  trigger:
+  - platform: template
+    value_template: "{% if is_state('media_player.android_tv', 'playing') and is_state_attr('media_player.android_tv', 'app_name', 'YouTube') %}true{% endif %}"
+  - platform: template
+    value_template: "{% if is_state('media_player.android_tv', 'playing') and is_state_attr('media_player.android_tv', 'app_name', 'Netflix') %}true{% endif %}"
+  - platform: template
+    value_template: "{% if is_state('media_player.android_tv', 'playing') and is_state_attr('media_player.android_tv', 'app_name', 'Plex') %}true{% endif %}"
+  condition:
+    condition: and
+    conditions:
+    - condition: template
+      value_template: "{{ (states('sensor.time') >= states.input_datetime.scene_dalle.state[0:5]) and (states('sensor.time') < states.input_datetime.scene_alle.state[0:5]) }}"
+    - condition: state
+      entity_id: switch.moviemode
+      state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.movie_script
+    
+    
+- alias: "moviemode_turn_off"
+  trigger:
+  - platform: template
+    value_template: "{% if is_state('media_player.android_tv', 'playing') and is_state_attr('media_player.android_tv', 'app_name', 'Live TV') %}true{% endif %}"
+  condition:
+    condition: and
+    conditions:
+    - condition: template
+      value_template: "{{ (states('sensor.time') >= states.input_datetime.scene_dalle.state[0:5]) and (states('sensor.time') < states.input_datetime.scene_alle.state[0:5]) }}"
+  action:
+  - delay: 
+      seconds: '5'
+  - service: scene.turn_on
+    entity_id: scene.normal
+    
+- alias: "moviemode_goodnight"
+  trigger:
+  - platform: state
+    entity_id: 
+    - media_player.android_tv
+    to: 'idle'
+  - platform: state
+    entity_id: 
+    - media_player.android_tv
+    to: 'standby'
+  condition:
+    condition: and
+    conditions:
+    - condition: template
+      value_template: "{{ (states('sensor.time') >= states.input_datetime.scene_dalle.state[0:5]) and (states('sensor.time') < states.input_datetime.scene_alle.state[0:5]) }}"
+  action:
+  - delay: 
+      seconds: '10'
+  - service: scene.turn_on
+    entity_id: scene.goodnight
+    
+
+input_select:    
+  movie_mode_scenes:
+    name: 'Genere:'
+    options:
+    - Standard
+    - Football
+    - Romantik
+    - Movie
+    initial: Standard
+    
+#orario  scene
+input_datetime:
+  scene_dalle:
+    has_date: false
+    has_time: true
+    
+  scene_alle:
+    has_date: false
+    has_time: true
+    
+    
+#SCENE
+scene:
+
+- name: normal
+  entities:
+    light.led_salotto:
+      state: off
+    light.led_tv:
+      state: off
+    light.shelly1_32d081_relay_0:
+      state: on
+
+#- name: standard
+#  entities:
+#    light.led_salotto:
+#      state: off
+#    light.shelly1_32cacb_relay_0:
+#      state: off
+#    light.shelly1_32d081_relay_0:
+#      state: on
+#    light.shelly1_326385_relay_0:
+#      state: off
+
+- name: goodnight
+  entities:
+    light.led_salotto:
+      state: off
+    light.led_tv:
+      state: off
+    light.shelly1_32cacb_relay_0:
+      state: off
+    light.shelly1_32d081_relay_0:
+      state: off
+    light.shelly1_326385_relay_0:
+      state: off
+      
+- name: football
+  entities:
+    light.led_salotto:
+      state: on
+      transition: 2
+      brightness: 255
+      rgb_color: [100,180,0]
+    light.led_tv:
+      state: on
+      transition: 2
+      brightness: 255
+      rgb_color: [100,180,0]
+    light.shelly1_32cacb_relay_0:
+      state: off
+    light.shelly1_32d081_relay_0:
+      state: off
+    light.shelly1_326385_relay_0:
+      state: off
+    
+- name: movie
+  entities:
+    light.led_salotto:
+      state: on
+      transition: 2
+      brightness: 20
+      rgb_color: [0,80,180]
+    light.led_tv:
+      state: on
+      transition: 2
+      brightness: 20
+      rgb_color: [0,80,180]
+    light.shelly1_32cacb_relay_0:
+      state: off
+    light.shelly1_32d081_relay_0:
+      state: off
+    light.shelly1_326385_relay_0:
+      state: off
+
+- name: romantik
+  entities:
+    light.led_salotto:
+      state: on
+      transition: 2
+      brightness: 20
+      rgb_color: [255,30,110]
+    light.led_tv:
+      state: on
+      transition: 2
+      brightness: 20
+      rgb_color: [255,30,110] 
+    light.shelly1_32cacb_relay_0:
+      state: off
+    light.shelly1_32d081_relay_0:
+      state: off
+    light.shelly1_326385_relay_0:
+      state: off
+
+group:
+  movie_automatic:
+    name: Film Automatici
+    entities:
+      - switch.moviemode
+      - input_select.movie_mode_scenes
+
+script:
+  movie_script:
+    alias: Set scene
+    sequence:
+    - service: scene.turn_on
+      data_template:
+        entity_id: >
+          {% if is_state("input_select.movie_mode_scenes", "Movie") %} scene.movie
+          {% elif is_state("input_select.movie_mode_scenes", "Football") %} scene.football
+          {% elif is_state("input_select.movie_mode_scenes", "Romantik") %} scene.romantik
+          {% endif %}       

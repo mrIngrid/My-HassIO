@@ -1,0 +1,72 @@
+homeassistant:
+  customize:
+    sensor.tracker_itag_ingrid:
+      icon: mdi:bluetooth-connect
+      
+    sensor.tracker_itag_xxxxxxx:
+      icon: mdi:bluetooth-connect
+      
+    sensor.tracker_itag_casa:
+      icon: mdi:bluetooth-connect
+      
+    sensor.amazfit_esp32:
+      icon: mdi:watch
+      
+sensor:
+  - platform: mqtt
+    name: !secret nome_dispositivo_iTag_tracker_user1
+    state_topic: !secret topic_dispositivo_iTag_tracker_user1
+    availability_topic: !secret topic_dispositivo_ESP32_availability    
+    #expire_after: 180
+    value_template: >-
+      {% if value == 'ON' %}
+        home
+      {% elif value == 'OFF' %}
+        away
+      {% else %}
+        away
+      {% endif %}
+
+  - platform: mqtt
+    name: !secret nome_dispositivo_iTag_tracker_user2
+    state_topic: !secret topic_dispositivo_iTag_tracker_user2
+    availability_topic: !secret topic_dispositivo_ESP32_availability    
+    #expire_after: 180
+    value_template: >-
+      {% if value == 'ON' %}
+        home
+      {% elif value == 'OFF' %}
+        away
+      {% else %}
+        away
+      {% endif %}
+
+  - platform: mqtt
+    name: !secret nome_dispositivo_iTag_tracker_user3
+    state_topic: !secret topic_dispositivo_iTag_tracker_user3
+    availability_topic: !secret topic_dispositivo_ESP32_availability
+    #expire_after: 180
+    value_template: >-
+      {% if value == 'ON' %}
+        home
+      {% elif value == 'OFF' %}
+        away
+      {% else %}
+        away
+      {% endif %}
+
+   
+  - platform: mqtt
+    name: "Amazfit Esp32"
+    state_topic: "dss_ble2mqtt/30C40A24/casa/d8803c0e9d76/state"
+    availability_topic: !secret topic_dispositivo_ESP32_availability
+    #expire_after: 180
+    value_template: >-
+      {% if value == 'ON' %}
+        home
+      {% elif value == 'OFF' %}
+        away
+      {% else %}
+        away
+      {% endif %} 
+      

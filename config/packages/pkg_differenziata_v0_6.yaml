@@ -1,0 +1,137 @@
+homeassistant:
+  customize:
+
+    package.node_anchors:
+      customize: &customize
+        Package:: Raccolta Differenziata
+        Creato da:: Mattia (t.me/xxKira)
+        Creato per:: HassioHelp
+        
+    input_text.umido_hp:
+      icon: mdi:food-apple
+      hidden: false
+    input_text.carta_hp:
+      icon: mdi:file
+      hidden: false
+    input_text.vetro_hp:
+      icon: mdi:glass-wine
+      hidden: false
+    input_text.plastica_hp:
+      icon: mdi:bottle-wine 
+      hidden: false
+    input_text.verde_hp:
+      icon: mdi:tree
+      hidden: false
+    input_text.secco_hp:
+      icon: mdi:delete-empty
+      hidden: false
+        
+  customize_glob:
+    "input_text.*_hp":
+      <<: *customize
+    "automation.*_hp":
+      <<: *customize
+    "input_datetime.*_hp":
+      <<: *customize
+    "input_boolean.*_hp":
+      <<: *customize
+    "script.*_hp":
+      <<: *customize
+
+input_datetime:
+  orario_avviso_differenziata_hp:
+    name: Orario avviso raccolta differenziata
+    has_date: false
+    has_time: true
+    initial: "08:00"
+
+## serve per far comparire/scomparire il menù scelta giorni in lovelace
+input_boolean:
+  differenziata_settings_hp:
+  giorni_settings_hp:
+  giorno_notifica_hp:
+
+input_text:
+  vuoto:
+    name: vuoto
+    initial: ' '
+  secco_hp:
+    name: secco
+  umido_hp:
+    name: umido
+  carta_hp:
+    name: carta
+  plastica_hp:
+    name: plastica
+  vetro_hp:
+    name: vetro
+  verde_hp:
+    name: verde
+  servizio_notifica_hp:
+    name: notify.
+    #initial: 'telegram'
+  titolo_notifica_hp:
+    name: titolo notifica
+    initial: '*Differenziata*'
+  messaggio_notifica_hp:
+    name: messaggio notifica
+    initial: 'Oggi ritirano:'
+  entity_google_tts_hp:
+    #initial: 'google_home'
+    name: 'tts.google_say'
+  entity_alexa_tts_hp:
+    #initial: 'alexa, echo'
+    name: 'alexa_tts'
+  entity_script_tts_hp:
+    initial: 'my_notify'
+    name: 'script.'
+
+automation:
+
+# set_settimana = True parte dalla prima settimana di Gennaio, False = parte dalla seconda settimana di Gennaio
+# da tenere conto solo per il bisettimanale e mensile
+# se set_settimana viene omesso sarà di default a True quindi partendo dalla prima settimana di Gennaio
+
+  - alias: 'Sincronizzo Raccolta hp'
+    initial_state: 'on'
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: input_text.verde_hp, input_text.umido_hp, input_text.vetro_hp, input_text.carta_hp, input_text.plastica_hp, input_text.secco_hp, input_boolean.giorno_notifica_hp
+      - platform: template
+        value_template: '{{ states("sensor.time") == "01:00" }}'
+    action:
+      - service: python_script.raccolta
+        data:
+          argomento: "sincronizza"
+          set_settimana: "True"
+      
+  - alias: 'Notifica Raccolta hp'
+    initial_state: 'on'
+    trigger:
+      - platform: template
+        value_template: '{{ states("sensor.time") == (states.input_datetime.orario_avviso_differenziata_hp.attributes.timestamp | int | timestamp_custom("%H:%M", False)) }}'
+    action:
+      - service: script.notifica_raccolta_hp
+
+script:
+  sincronizza_raccolta_hp:
+    sequence:
+      - service: python_script.raccolta
+        data:
+          argomento: "sincronizza"
+          set_settimana: "True"
+      
+  notifica_raccolta_hp:
+    sequence:
+      - service: python_script.raccolta
+        data_template:
+          argomento: "notifica"
+          set_settimana: "True"
+          servizio_notifica: "{{ states('input_text.servizio_notifica_hp') }}"
+          titolo_notifica: "{{ states('input_text.titolo_notifica_hp') }}"
+          messaggio_notifica: "{{ states('input_text.messaggio_notifica_hp') }}"
+          entity_google_tts: "{{ states('input_text.entity_google_tts_hp') }}"
+          entity_alexa_tts: "{{states('input_text.entity_alexa_tts_hp') }}"
+          entity_script_tts: "{{ states('input_text.entity_script_tts_hp') }}"

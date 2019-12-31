@@ -1,0 +1,112 @@
+script:
+  ht_power:
+    alias: "Power"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: on_off
+        num_repeats: 1
+        
+  ht_volume_up:
+    alias: "Vol+"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: volume_up
+        num_repeats: 2
+        delay_secs: 0.75
+        hold_secs: 2.5
+        
+  ht_volume_down:
+    alias: "Vol-"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: volume_down
+        num_repeats: 2
+        delay_secs: 0.75
+        hold_secs: 2.5
+        
+  ht_listen_mode:
+    alias: "Listen Mode"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: listen_mode
+        num_repeats: 1
+        
+  ht_pure_audio:
+    alias: "Pure Audio"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: pure_audio
+        num_repeats: 1
+        
+  ht_video_1:
+    alias: "Video 1"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: video_1
+        num_repeats: 1
+        
+  ht_video_2:
+    alias: "Video 2"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: video_2
+        num_repeats: 1
+        
+  ht_aux:
+    alias: "Aux"
+    sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.broadlink
+        device: Home Theatre
+        command: aux
+        num_repeats: 1
+        
+  turn_up_tv_volume_20:
+    alias: "Vol+ 10"
+    sequence:
+      - service: remote.send_command
+        data:
+          entity_id: remote.broadlink
+          device: Home Theatre
+          command: volume_up
+          num_repeats: 10
+          delay_secs: 0.75
+          hold_secs: 2.5
+
+  turn_down_tv_volume_20:
+    alias: "Vol- 10"
+    sequence:
+      - service: remote.send_command
+        data:
+          entity_id: remote.broadlink
+          device: Home Theatre
+          command: volume_down
+          num_repeats: 10
+          delay_secs: 0.75
+          hold_secs: 2.5
+          
+          
+          
+          

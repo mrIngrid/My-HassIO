@@ -1,0 +1,28 @@
+homeassistant:
+  customize:
+    script.learn_tv_commands:
+      icon: mdi:remote-tv
+      name: Attiva Accoppiamento
+
+input_text:
+  name_device:
+    name: Nome Dispositivo
+    mode: text
+    icon: mdi:audio-video
+    
+  name_command:
+    name: Nome Commando
+    mode: text
+    icon: mdi:remote
+
+script:
+  learn_tv_commands:
+    sequence:
+      - service: remote.learn_command
+        data:
+          entity_id: remote.broadlink
+          device: Home Theatre
+          alternative: true
+          timeout: 30
+          command:
+          - '{{ states("input_text.name_command") }}'

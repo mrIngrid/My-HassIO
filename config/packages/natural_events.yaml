@@ -1,0 +1,835 @@
+### INFO
+  #   @author         :   Caio & Gianpi - www.hassiohelp.eu
+  #   @date           :   01/08/2019
+  #   @package        :   Natural_events
+  #   @description    :   Information provided by MeteoAlarm, Burze, WWLLN, DPC and INGV Italy
+  ##########################################################################
+  # weblink:
+  #   entities:
+  #     - name: Burze Custom Component (HACS)
+  #       url: https://github.com/PiotrMachowski/Home-Assistant-custom-components-Burze.dzis.net
+  #     - name: MeteoAlarm Componet
+  #       url: https://www.home-assistant.io/components/meteoalarm/
+  #     - name: MeteoAlarm sito Italia
+  #       url: http://meteoalarm.eu/it_IT/0/0/IT-Italia.html # Cerca il nome della tua Regione
+  #     - name: WWLLN Component
+  #       url: https://www.home-assistant.io/components/wwlln/
+  #       name: DPC Component (Dipartimento Protezione civile)
+  #       https://github.com/caiosweet/Home-Assistant-custom-components-DPC-Alert
+  #     - name: Protezione Civile Pop 
+  #       url: http://www.protezionecivilepop.tk/
+  #     - name: Cerca Codie ISTAT
+  #       url: https://www.paginebianche.it/codice-istat
+  #     - name: Geolocation
+  #       url: https://www.home-assistant.io/components/geo_location/
+
+homeassistant:
+  customize:
+    ########################################################################
+    ## CUSTOMIZE NODE ANCHORS
+    ########################################################################
+    package.node_anchors:
+      customize: &customize
+        package: 'Natural_events'
+        author: 'Caio & Gianpi - www.hassiohelp.eu'
+        version: '2.0'
+
+      expose: &expose
+        <<: *customize
+        haaska_hidden: false
+        homebridge_hidden: false
+
+    ##--------------------- IMPOSTAZIONI DEL PACKAGE ---------------------##
+      setting:
+        SCRIPT centro notifiche: &script 'script.my_notify'
+        SERVIZIO Notify: &notify ''
+        MEDIA PLAYER Google: &media_player_google ''
+        MEDIA PLAYER Alexa: &media_player_alexa ''
+      filter:
+        RAGGIO ZONA MeteoAlert metri: &radius_meteoalert 25000
+        RAGGIO ZONA GeoAlert metri: &radius_geoalert 850000
+        RAGGIO TERREMOTO km: &radius_quake 800
+        MAGNITUDO minimo: &magnitude 3
+        RAGGIO BURZE km: &radius_burze 25
+        RAGGIO WWLLN km: &radius_wwlln 25
+        WWLLN finestra minuti: &windows 360
+      secret:
+        LATITUDINE per le zone: &latitude !secret latitude_home
+        LONGITUDINE per le zone: &longitude !secret longitude_home
+        REGIONE MeteoAlaram: &province !secret regione 
+        ISTAT DPC: &istat !secret istat
+        API KEY Burze: &burze_api_key !secret burze_api_key
+    ##--------------------- FINE IMPOSTAZIONI PACKAGE ---------------------##
+
+############################################################################
+##                               CUSTOMIZE                               
+############################################################################
+    ################################################
+    ## Automation
+    ################################################
+    automation.natural_events_burze_notifications:
+      <<: *customize
+      friendly_name: "Burze Notifiche"
+    automation.natural_events_meteoalarm_notifications:
+      <<: *customize
+      friendly_name: "MeteoAlarm Notifiche"
+    automation.natural_events_protezione_civile_notifications:
+      <<: *customize
+      friendly_name: "DPC Notifiche"
+    automation.natural_events_quake_notifications:
+      <<: *customize
+      friendly_name: "INGV Notifiche"
+    automation.natural_events_startup:
+      <<: *customize
+      friendly_name: "StartUp Natural events"
+    ################################################
+    ## Binary Sensor
+    ################################################
+    binary_sensor.burze_storms_nearby:
+      <<: *customize
+      friendly_name: "Temporale nelle vicinanze"
+      device_class: vibration
+    binary_sensor.meteoalarm:
+      <<: *customize
+      friendly_name: MeteoAlarm
+    binary_sensor.lastquake:
+      <<: *customize
+      friendly_name: Scossa Terremoto
+      icon: mdi:pulse
+    ################################################
+    ## Group
+    ################################################
+    group.natural_events:
+      <<: *customize
+      friendly_name: "Eventi Naturali"
+      icon: mdi:location-enter
+    group.geoalert:
+      <<: *customize
+      friendly_name: "Allerta Geologica"
+      icon: mdi:earth
+    group.meteoalert:
+      <<: *customize
+      friendly_name: "Allerta Meteo"
+      icon: mdi:weather-lightning-rainy
+    ################################################
+    ## Input
+    ################################################
+    input_select.meteo_map:
+      <<: *customize
+      icon: mdi:map-legend
+    input_select.meteo_iframe:
+      <<: *customize
+      icon: mdi:map-legend
+    input_boolean.natural_events: 
+      <<: *customize
+      friendly_name: "Info e Impostazioni"
+      icon: mdi:settings
+    input_boolean.natural_events_send_image:
+      <<: *customize
+      friendly_name: "Invia Immagini"
+      icon: mdi:image
+    ################################################
+    ## Sensor
+    ###############################################
+    sensor.burze_direction:
+      <<: *customize
+      friendly_name: "Direzione Ultimo Fulmine"
+    sensor.meteoalarm_type:
+      <<: *customize
+      friendly_name: "Tipo Criticità Meteo"
+    sensor.meteoalarm_level:
+      <<: *customize
+      friendly_name: "Livello Criticità Meteo"
+    sensor.natural_events_level:
+      <<: *customize
+      friendly_name: "Livello Criticità Globale"
+    ################################################
+    ## Zone
+    ################################################
+    script.natural_events_notifications:
+      <<: *customize
+      friendly_name: Centro Notifiche
+      icon: mdi:account-tie
+    ################################################
+    ## Zone
+    ################################################
+    zone.geoalert:
+      <<: *customize
+      friendly_name: Zona Allerta Geologica
+      icon: mdi:radiobox-marked
+    zone.meteoalert:
+      <<: *customize
+      friendly_name: Zona Allerta Meteo
+      icon: mdi:flash-circle
+############################################################################
+##                             CUSTOMIZE GLOB                              
+############################################################################
+  customize_glob:
+    binary_sensor.dpc_*:
+      <<: *customize
+    automation.natural_events_*:
+      <<: *customize
+      icon: mdi:alpha-a-circle-outline
+    script.natural_events_*:
+      <<: *customize
+
+#######################################-#######################################
+##                                  PACKAGE
+#######################################-#######################################
+#######################################-#######################################
+##                                 COMPONENT
+#######################################-#######################################
+geo_location:
+  - platform: ingv_centro_nazionale_terremoti
+    radius: *radius_quake
+    minimum_magnitude: *magnitude
+
+wwlln:
+  radius: *radius_wwlln
+  window: *windows
+
+zone:
+  - name: geoalert
+    latitude: *latitude
+    longitude: *longitude
+    radius: *radius_geoalert
+    passive: true
+
+  - name: meteoalert
+    latitude: *latitude
+    longitude: *longitude
+    radius: *radius_meteoalert
+    passive: true
+#######################################-#######################################
+##                                   GROUP
+#######################################-#######################################
+group:
+  natural_events:
+    name: Allerta Eventi Naturali
+    entities:
+      - group.meteoalert
+      - group.geoalert
+  meteoalert:
+    name: Allerta Meteo
+    entities:
+      - binary_sensor.meteoalarm
+      - binary_sensor.burze_storms_nearby
+      - binary_sensor.dpc_temporali_oggi
+      - binary_sensor.dpc_temporali_domani
+  geoalert:
+    name: Allerta Geologica
+    entities:
+      - binary_sensor.lastquake
+      - binary_sensor.dpc_idraulico_domani
+      - binary_sensor.dpc_idraulico_oggi
+      - binary_sensor.dpc_idrogeologico_domani
+      - binary_sensor.dpc_idrogeologico_oggi
+
+#######################################-#######################################
+##                                   INPUT
+#######################################-#######################################
+input_select:
+  meteo_map:
+    name: Mappa
+    options:
+      - Nuvole e Sole
+      - Nuvole Infrared
+      - Pioggia
+      - Neve
+      - Burze
+      - WWLLN
+      - Nessuna
+  meteo_iframe:
+    name: Iframe
+    options:
+      - Windy Alert
+      - Posizione Geografica
+      - Nessuna
+
+input_boolean:
+  natural_events:
+  natural_events_send_image:
+
+#######################################-#######################################
+##                               BINARY SENSOR
+#######################################-#######################################
+binary_sensor:
+  - platform: dpc
+    name: 'dpc'
+    istat: *istat
+    warnings:
+      - temporali_oggi
+      - idraulico_oggi
+      - idrogeologico_oggi
+      - temporali_domani
+      - idraulico_domani
+      - idrogeologico_domani
+
+#  - platform: burze_dzis_net
+#    api_key: *burze_api_key
+#    name: burze
+#    storms_nearby:
+#      radius: *radius_burze
+
+  - platform: meteoalarm
+    country: 'IT'
+    province: *province
+    language: 'it'
+
+  - platform: template
+    sensors:
+      lastquake:
+        friendly_name: Evento terremoto
+        entity_id: 
+          - automation.natural_events_quake_notifications
+          - sensor.date
+        device_class: vibration
+        value_template: >-
+          {%set last_date = states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+          |sort(attribute='attributes.publication_date')|map(attribute='attributes.publication_date')|list|last%}
+          {%set last_trigger = states.automation.natural_events_quake_notifications.attributes.last_triggered %}
+          {{((as_timestamp(utcnow())-as_timestamp(last_trigger))/3600) <=24 if last_trigger
+          else ((as_timestamp(utcnow())-as_timestamp(last_date))/3600) <=24 }}
+        attribute_templates:
+          distance: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+             |sort(attribute='attributes.publication_date')|map(attribute='state')|list|last}}
+          latitude: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.latitude')|list|last}}
+          longitude: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.longitude')|list|last}}
+          title: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.title')|list|last}}
+          region: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.region')|list|last}}
+          magnitude: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.magnitude')|list|last}}
+          publication_date: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.publication_date')|list|last}}
+          short_id: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.short_id')|list|last}}
+          image_url: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.image_url')|list|last}}
+          attribution: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.attribution')|list|last}}
+          level: >-
+            {%set m = states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+              |sort(attribute='attributes.publication_date')|map(attribute='attributes.magnitude')|list|last%}
+              {% if m is defined %}
+              {%if 0<=m<=1.9%}0{%elif 2<=m<=2.9%}1{%elif 3<=m<=3.9%}2{%elif 4<=m<=5.9%}3{%else%}4{%endif%}
+              {% endif %}
+          external_id: >-
+            {{states.geo_location|selectattr('attributes.source','eq','ingv_centro_nazionale_terremoti')
+            |sort(attribute='attributes.publication_date')|map(attribute='attributes.external_id')|list|last|replace('smi:','')}}
+
+#######################################-#######################################
+##                                  SENSOR
+#######################################-#######################################
+sensor:
+  - platform: template
+    sensors:
+      ## BURZE TEMPLATE SENSOR
+      burze_direction:
+        friendly_name: "Direzione del temporale"
+        entity_id: binary_sensor.burze_storms_nearby
+        value_template: >-
+          {% set cardinal = state_attr('binary_sensor.burze_storms_nearby', 'direction') %}
+          {% set dict_direction = {
+            'N':'Nord',
+            'NE':'Nord Est',
+            'E':'Est',
+            'SE':'Sud Est',
+            'S':'Sud',
+            'SW':'Sud Ovest',
+            'W':'Ovest',
+            'NW':'Nord Ovest', } %}
+          {{ dict_direction[cardinal] if cardinal in dict_direction else cardinal }}
+        icon_template: >
+          {% set cardinal = state_attr('binary_sensor.burze_storms_nearby', 'direction') %}
+          {% set dict_direction = {
+            'N':'arrow-up',
+            'NE':'arrow-top-right',
+            'E':'arrow-left',
+            'SE':'arrow-bottom-right',
+            'S':'arrow-down',
+            'SW':'arrow-bottom-left',
+            'W':'arrow-left',
+            'NW':'arrow-top-left', } %}
+          mdi:{{ dict_direction[cardinal] if cardinal in dict_direction else 'arrow-left-right' }}-bold-outline
+
+      ## METEOALARM TEMPLATE TYPE SENSOR
+      meteoalarm_type:
+        friendly_name: Meteoalarm type
+        entity_id: binary_sensor.meteoalarm
+        value_template: >
+          {% set list_type = ['Nessun Avviso','Vento','Neve/Ghiaccio','Temporali','Nebbia','Temperature massime estreme','Temperature minime estreme',
+          'Eventi Costieri', 'Incendi boschivi','Valanghe','Pioggia','Non disponibile','Alluvione','Pioggia/Alluvione'] %}
+          {% set type = state_attr('binary_sensor.meteoalarm', 'awareness_type') %}
+          {{ 'Non disponibile' if type == none else list_type[type.split(';')[0]|int] }}
+        icon_template: >
+          {% set dict_type = {
+          0  : "shield-outline",
+          1  : "weather-windy",
+          2  : "snowflake-alert",
+          3  : "weather-lightning",
+          4  : "weather-fog",
+          5  : "thermometer-plus",
+          6  : "thermometer-minus",
+          7  : "sailing",
+          8  : "fire",
+          9  : "shovel",
+          10 : "weather-pouring",
+          11 : "help-circle",
+          12 : "waves",
+          13 : "home-flood", } %}
+          {% set type = state_attr('binary_sensor.meteoalarm', 'awareness_type') %}
+          {{ 'mdi:help-circle' if type == none else 'mdi:'~dict_type[type.split(';')[0]|int]}}
+
+      ## METEOALARM TEMPLATE LEVEL SENSOR
+      meteoalarm_level:
+        friendly_name: Meteoalarm level
+        entity_id: binary_sensor.meteoalarm
+        value_template: >
+          {% set code_color = state_attr('binary_sensor.meteoalarm', 'awareness_level') %}
+          {{ 'White' if code_color == none else code_color.split(';')[1]|title }}
+        icon_template: >
+          {% set code = state_attr('binary_sensor.meteoalarm','awareness_level') %}
+          {{'mdi:numeric-0-box' if code == none else 'mdi:numeric-'~code.split(';')[0]~'-box'}}
+
+      ## NATURAL EVENTS GLOBAL LEVEL SENSOR
+      natural_events_level:
+        friendly_name: Natural Events Level
+        entity_id: 
+          - group.natural_events
+          - binary_sensor.lastquake
+          - binary_sensor.meteoalarm
+          - binary_sensor.dpc_temporali_oggi
+          - binary_sensor.dpc_idraulico_oggi
+          - binary_sensor.dpc_idrogeologico_oggi
+          - binary_sensor.dpc_temporali_domani
+          - binary_sensor.dpc_idraulico_domani
+          - binary_sensor.dpc_idrogeologico_domani
+        value_template: >
+          {% set color = {0:'White', 1:'Green', 2:'Yellow', 3:'Orange', 4:'Red'} %}
+          {% set code = state_attr('binary_sensor.meteoalarm','awareness_level') %}
+          {% set lev1 = '0' if code == none else code.split(';')[0] %}
+          {% set lev2 = expand('group.natural_events')
+            | selectattr("attributes.level", 'defined')
+            | join(', ', attribute='attributes.level') %}
+          {% set lev_color = (lev1, lev2)|default(0, true)|max|first|int %}
+          {{ color[lev_color] }}
+        icon_template: >
+          {% set color = {0:'White', 1:'Green', 2:'Yellow', 3:'Orange', 4:'Red'} %}
+          {% set code = state_attr('binary_sensor.meteoalarm','awareness_level') %}
+          {% set lev1 = '0' if code == none else code.split(';')[0] %}
+          {% set lev2 = expand('group.natural_events')
+            | selectattr("attributes.level", 'defined')
+            | join(', ', attribute='attributes.level') %}
+          {% set lev_color = (lev1, lev2)|default(0, true)|max|first|int %}
+          {{ lev_color }}
+#######################################-#######################################
+##                                 AUTOMATION
+#######################################-#######################################
+automation:
+    #----------------------------------------------------------------------------------------------------#
+    # START-UP - natural_events (Crea gruppo di tutti i binary sensor e aggiorna alcuni sensori)
+    #----------------------------------------------------------------------------------------------------#
+  - id: natural_events_startup
+    alias: natural_events_startup
+    initial_state: true
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: automation.natural_events_startup
+        to: 'on'
+    action:
+      # - service: group.set
+      #   data_template:
+      #     object_id: "natural_events"
+      #     name: "Sensori natural_events"
+      #     icon: mdi:earth
+      #     visible: true
+      #     entities: >
+      #       {%- for item in states.binary_sensor if ((item.attributes.package | lower).startswith('natural_events')) -%}
+      #       {{ item.entity_id }}{% if not loop.last %}, {% endif %}
+      #       {%- endfor -%}
+      - delay: 00:00:15
+      - service: homeassistant.update_entity
+        entity_id: binary_sensor.lastquake
+      - service: system_log.write
+        data:
+          message: "Successfully start Natural events package."
+          level: info
+
+#----------------------------------------------------------------------------------------------------#
+# BURZE.NET Notifica caduti fulmini nel raggio impostato in radius_meteoalert 
+#----------------------------------------------------------------------------------------------------#
+  - id: natural_events_burze_notifications
+    alias: natural_events_burze_notifications
+    hide_entity: true
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: 
+        - binary_sensor.burze_storms_nearby
+    condition:
+      - condition: and
+        conditions:
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'on' }}"
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'off' }}"
+              - condition: template
+                value_template: >
+                  {{ trigger.to_state.attributes.distance < trigger.from_state.attributes.distance }}
+    action:
+      - wait_template: >-
+          {{ is_state('script.natural_events_notifications', 'off') }}
+      - service: *script
+        data:
+          call_no_annuncio: 1
+        data_template:
+          title: >-
+            Burze -
+            {% if trigger.from_state.state == 'off' %}
+            {{ trigger.to_state.attributes.friendly_name }}.
+            {% else %} AGGIORNAMENTO TEMPORALE. {% endif %}
+          message: >-
+            {% if trigger.from_state.state == 'off' %} Probabile arrivo di un temporale. {% else %} Aggiornamento Temporale. {% endif %}
+            Negli ultimi *{{state_attr('binary_sensor.burze_storms_nearby', 'period')}}* minuti
+            *{{state_attr('binary_sensor.burze_storms_nearby', 'number')}}*
+            {% if state_attr('binary_sensor.burze_storms_nearby', 'number') != 1 %}
+            scariche di fulmini {% else %} fulmine scaricato {% endif %} entro il raggio selezionato.
+            La scarica più vicina è avvenuta a *{{state_attr('binary_sensor.burze_storms_nearby', 'distance')}} km* 
+            a *{{states('sensor.burze_direction')}}* da casa.
+          message_tts: >-
+            {% if trigger.from_state.state == 'off' %} Probabile arrivo di un temporale. 
+            {% else %} 
+            Aggiornamento Temporale. Il fulmine più vicino è stato rilevato 
+            a {{state_attr('binary_sensor.burze_storms_nearby', 'distance')}} km 
+            a {{states('sensor.burze_direction')}} da casa.
+            {% endif %}
+          file: >-
+            {% if trigger.from_state.state == 'off' and is_state('input_boolean.natural_events_send_image', 'on') %}
+            /config/www/hassiohelp/pkg_natural_events/burze.png
+            {% else %}
+            {% endif %}
+          media_player_google: *media_player_google
+          media_player_alexa: *media_player_alexa
+          notify: *notify
+
+#----------------------------------------------------------------------------------------------------#
+# METEOALARM - Notifica criticità meteo nella regione impostata - Vedi tabella a fine package
+#----------------------------------------------------------------------------------------------------#
+  - id: natural_events_meteoalarm_notifications
+    alias: natural_events_meteoalarm_notifications
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.meteoalarm
+    condition:
+      - condition: and
+        conditions:
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'on' }}"
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'off' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.effective != trigger.from_state.attributes.effective }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.expires != trigger.from_state.attributes.expires }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.onset != trigger.from_state.attributes.onset }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.awareness_type != trigger.from_state.attributes.awareness_type }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.awareness_level != trigger.from_state.attributes.awareness_level }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.urgency != trigger.from_state.attributes.urgency }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.severity != trigger.from_state.attributes.severity }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.awareness_level != trigger.from_state.attributes.event }}"
+    action:
+      - wait_template: >-
+          {{ is_state('script.natural_events_notifications', 'off') }}
+      - service: *script
+        data:
+          call_no_annuncio: 1
+        data_template:
+          title: >-
+            {% set start = state_attr('binary_sensor.meteoalarm', 'effective') %}
+            {% set end = state_attr('binary_sensor.meteoalarm', 'expires') %}
+            MeteoAlarm -
+            {% if trigger.from_state.state == 'off' %}
+            {{ trigger.to_state.attributes.urgency }}. 
+            {% else %}Aggiornamenti.{% endif %}
+            {{as_timestamp(start)|timestamp_custom('Valido dalle ore %H:%M del %d/%m')}}
+            {{as_timestamp(end)|timestamp_custom(' alle ore %H:%M del %d/%m')}}
+          message: >-
+            {% if trigger.from_state.state == 'off' %}
+            Allerta Meteo.
+            {% else %} Aggiornamento allerta meteo. {% endif %}
+            *{{states('sensor.meteoalarm_type')}}.*
+            Descrizione *{{state_attr('binary_sensor.meteoalarm', 'description')}}*
+          message_tts: 'Allerta Meteo'
+          media_player_google: *media_player_google
+          media_player_alexa: *media_player_alexa
+          notify: *notify
+          file: >-
+            {% if is_state('input_boolean.natural_events_send_image', 'on') %}
+            {% set type = state_attr('binary_sensor.meteoalarm', 'awareness_type') %}
+            /config/www/hassiohelp/pkg_natural_events/{{'0' if type == none else 'meteoalarm_'~type.split(';')[0]}}.png
+            {% else %}
+            {% endif %}
+#----------------------------------------------------------------------------------------------------#
+# PROTEZIONE CIVILE - Notifica criticità meteo-idro nella provincia impostata - Vedi tabella a fine package
+#----------------------------------------------------------------------------------------------------#
+  - id: natural_events_protezione_civile_notifications
+    alias: natural_events_protezione_civile_notifications
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: 
+        - binary_sensor.dpc_idrogeologico_oggi
+        - binary_sensor.dpc_idraulico_oggi
+        - binary_sensor.dpc_temporali_oggi
+        - binary_sensor.dpc_idrogeologico_domani
+        - binary_sensor.dpc_idraulico_domani
+        - binary_sensor.dpc_temporali_domani
+    condition:
+      - condition: and
+        conditions:
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'on' }}"
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.from_state.state == 'off' }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.data != trigger.from_state.attributes.data }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.allerta != trigger.from_state.attributes.allerta }}"
+              - condition: template
+                value_template: "{{ trigger.to_state.attributes.info != trigger.from_state.attributes.info }}"
+    action:
+      - wait_template: >-
+          {{ is_state('script.natural_events_notifications', 'off') }}
+      - service: *script
+        data:
+          call_no_annuncio: 1
+        data_template:
+          title: >-
+            Protezione Civile -
+            {% if trigger.from_state.state == 'off' %}
+            {{ trigger.to_state.attributes.friendly_name }}.
+            {% else %} AGGIORNAMENTO DPC. {% endif %}
+          message: >-
+            {% if trigger.from_state.state == 'off' %}
+            Bollettino Protezione Civile
+            {% else %} Aggiornamento bollettino. {% endif %}
+            Rischio {{trigger.to_state.attributes.rischio}}. Allerta {{trigger.to_state.attributes.alleta}} {{trigger.to_state.attributes.info}}.
+          message_tts: >-
+            {{ trigger.to_state.attributes.friendly_name }}. Allerta {{trigger.to_state.attributes.alleta}} {{trigger.to_state.attributes.info}}.
+          media_player_google: *media_player_google
+          media_player_alexa: *media_player_alexa
+          notify: *notify
+
+#----------------------------------------------------------------------------------------------------#
+# GEO LOCATION - Notifica Terremoti
+#----------------------------------------------------------------------------------------------------#
+  - id: natural_events_quake_notifications
+    alias: natural_events_quake_notifications
+    initial_state: 'on'
+    trigger:
+      - platform: geo_location
+        source: 'ingv_centro_nazionale_terremoti'
+        zone: zone.geoalert
+        event: enter
+    condition:
+      - condition: template
+        value_template: >
+          {{((as_timestamp(utcnow())-as_timestamp(trigger.to_state.attributes.publication_date))/3600*60)|int < 60 }}
+    action:
+      - wait_template: >-
+          {{ is_state('script.natural_events_notifications', 'off') }}
+      - service: *script
+        data_template:
+          title: '*Rilevato terremoto*'
+          message: >-
+            {% set data_utc = trigger.to_state.attributes.publication_date %}
+            Rilevato terremoto di magnitudo: *{{trigger.to_state.attributes.magnitude}}* 
+            a una distanza di *{{ trigger.to_state.state }}* Km da casa. 
+            Epicentro: *{{ trigger.to_state.attributes.region }}*
+            {{as_timestamp(data_utc)|timestamp_custom ('Data %d/%m/%Y Ore %H:%M:%S')}}
+          message_tts: >-
+            Rilevato terremoto
+          url: >-
+              {{trigger.to_state.attributes.image_url}}
+          notify: *notify
+          media_player_google: *media_player_google
+          media_player_alexa: *media_player_alexa
+
+#######################################-#######################################
+##                                  SCRIPT
+#######################################-#######################################
+script:
+  natural_events_notifications:
+    alias: Notifiche Geo Alert 
+    sequence:
+      # SOLO TESTO
+      - service_template: >-
+          {% if (url|length == 0 and file|length == 0) and notify|length > 1%}
+            {{notify}}
+          {% else %}
+            script.no_service
+          {% endif %}
+        data_template:
+          title: >
+            *{{ title }}*
+          message: >
+            {{message|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+
+      # URL IMAGE + TESTO
+      - service_template: >-
+          {% if url|length > 1 %}
+            {{notify}}
+          {% else %}
+            script.no_service
+          {% endif %}
+        data_template:
+          title: >
+            *{{ title }}*
+          message: >
+            {{message|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+          data:
+            photo:
+              - url: >-
+                 {{url}}
+                caption: |
+                  *{{title}}*
+                  {{message|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+
+      # FILE IMAGE + TESTO
+      - service_template: >-
+          {% if file|length > 1 %}
+            {{notify}}
+          {% else %}
+            script.no_service
+          {% endif %}
+        data_template:
+          title: >
+            *{{ title }}*
+          message: >
+            {{message|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+          data:
+            photo:
+              - file: >-
+                  {{file}}
+                caption: |
+                  *{{title}}*
+                  {{message|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+
+      # AUDIO
+      - condition: time
+        after: '07:00:00'
+        before: '23:00:00'
+      - condition: template
+        value_template: >
+          {{message_tts | length > 1}}
+
+      - service_template: >-
+          {% if media_player_google | length > 1 %}
+            tts.google_translate_say
+          {% else %}
+            script.no_service
+          {% endif %}
+        data_template:
+          entity_id: >-
+            {{media_player_google}}
+          message: >
+            {{message_tts|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+
+      - service_template: >-
+          {% if media_player_alexa | length > 1  %}
+            notify.alexa_media
+          {% else %}
+            script.no_service
+          {% endif %}
+        data_template:
+          target: >-
+            {{media_player_alexa}}
+          message: >
+            {{message_tts|replace('\n','')|replace('   ',' ')|replace('  ',' ')}}
+          data:
+            type: tts
+
+  no_service:
+    alias: NO Service 
+    sequence:
+      - delay: 00:00:00
+      # - service: system_log.write
+      #   data:
+      #     message: "Natural events package servizio inesistente."
+      #     level: warning
+
+#######################################-#######################################
+##                                END PACKAGE
+#######################################-#######################################
+### METEOALARM LEGEND
+    #### Awareness Types
+    # | Code | Type                      |
+    # |------|---------------------------|
+    # | 0    | No Warnings               | Nessun Avviso
+    # | 1    | Wind                      | Vento
+    # | 2    | Snow/Ice                  | Neve/Ghiaccio
+    # | 3    | Thunderstorms             | Temporali
+    # | 4    | Fog                       | Nebbia
+    # | 5    | Extreme High Temperatures | Temperature massime estreme
+    # | 6    | Extreme Low Temperatures  | Temperature minime estreme
+    # | 7    | Costal Event              | Eventi Costieri
+    # | 8    | Forest Fire               | Incendi bischivi
+    # | 9    | Avalanche                 | Valanghe
+    # | 10   | Rain                      | Pioggia
+    # | 11   | Unavailable               | Non disponibile
+    # | 12   | Flooding                  | Alluvione
+    # | 13   | Rain/Flooding             | Pioggia/Alluvione
+
+    #### Awareness Levels
+    # | Code | Level             |
+    # |------|-------------------|
+    # | 0    | White/Unknown     | Bianco/Sconosciuto
+    # | 1    | Green/No Warnings | Verde/Nessun Avviso
+    # | 2    | Yellow            | Giallo
+    # | 3    | Orange            | Arancione
+    # | 4    | Red               | Rosso
+
+
+    ## DIPARTIMENTO PROTEZIONE CIVILE LEGEND
+    # | Code | Level             |
+    # |------|-------------------|
+    # | 0    | BIANCA            | Non disponibile
+    # | 1    | VERDE             | Nessun Avviso
+    # | 2    | GIALLA            | 
+    # | 3    | ARANCIONE         |
+    # | 4    | ROSSA             |

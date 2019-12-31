@@ -1,0 +1,197 @@
+#################################################################
+#                                                               #
+#                      Packages/Repack DB                       #
+#                                                               #
+#################################################################
+
+#################################################################
+#                                                               #
+#                          Customize                            #
+#                                                               #
+#################################################################
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'repack_db'
+
+      expose: &expose
+        <<: *customize
+        haaska_hidden: false
+        homebridge_hidden: false
+    
+    ################################################
+    ## input
+    ################################################
+    input_boolean.repack_db:
+      <<: *customize
+      friendly_name: "Repack DB HA"
+      icon: mdi:database
+
+    input_datetime.repack_time:
+      <<: *customize
+      icon: mdi:clock-outline
+    
+    input_text.repack_status:
+      <<: *customize
+      icon: mdi:database-check
+
+    input_text.previous_dimension_db:
+      <<: *customize
+      icon: mdi:database-check
+      friendly_name: "Dim. precedenti HA DB"
+
+    ################################################
+    ## script / sensor
+    ################################################
+    script.repack_db:
+      <<: *customize
+      friendly_name: Repack DB
+    
+    sensor.home_assistant_v2_db:
+      <<: *customize
+      friendly_name: "Dimensioni HA DB"
+      icon: mdi:database
+
+#########################################################
+#                                                       #
+#                       GROUP                           #
+#                                                       #
+#########################################################
+group:
+  repackdb_package:
+    name: Repack DB Package
+    entities:
+      - input_boolean.repack_db
+      - input_datetime.repack_time
+      - input_number.day_to_keep
+      - input_text.repack_status
+      - input_text.previous_dimension_db
+      - script.repack_db
+      - sensor.home_assistant_v2_db
+
+#########################################################
+#                                                       #
+#                       SENSOR                          #
+#                                                       #
+#########################################################
+sensor:
+#https://www.home-assistant.io/components/sensor.filesize/
+  platform: filesize
+  file_paths:
+    - /config/home-assistant_v2.db
+#########################################################
+#                                                       #
+#                       SCRIPT                          #
+#                                                       #
+#########################################################
+script:
+  repack_db:
+    alias: Repack DB
+    sequence:
+    - service: recorder.purge
+      data_template:
+        keep_days: "{{ states('input_number.day_to_keep') | int }}"
+        repack: true
+
+#########################################################
+#                                                       #
+#                        INPUT                          #
+#                                                       #
+#########################################################
+input_boolean:
+  repack_db:
+    name: "Repack DB HA"
+    initial: 'on'
+    icon: mdi:refresh
+
+#########################################################
+input_datetime:
+  repack_time:
+    name: "Orario Repack"
+    has_date: false
+    has_time: true
+    initial: '01:32'
+    icon: mdi:clock-outline
+
+#########################################################
+input_text:
+  repack_status:
+    name: "Stato Repack"
+    initial: "-"
+    icon: mdi:database-check
+
+  previous_dimension_db:
+    name: "Dim. precedenti HA DB"
+    initial: "-"
+
+#########################################################
+input_number:
+  day_to_keep:
+    name: "Giorni da mantenere"
+    min: 1
+    max: 15
+    step: 1
+    initial: 3
+    mode: box
+    icon: mdi:calendar-today
+
+#########################################################
+#                                                       #
+#                     AUTOMAZIONI                       #
+#                                                       #
+#########################################################
+automation:
+#########################################################
+# pulisce il DB una volta al giorno nell'orario scelto 
+# NB sensor.time è obbligatorio
+# cambiare a proprio piacimento il servizio 
+# di notifica telegram
+#########################################################
+  - alias: purge DB
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >-
+        {{ states('sensor.time') == (states.input_datetime.repack_time.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}
+    condition:
+    - condition: state
+      entity_id: input_boolean.repack_db
+      state: 'on'
+    action:
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.repack_status
+        value: "Avviato repack su DB alle {{states('sensor.time')}}"
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.previous_dimension_db
+        value: "{{ states('sensor.home_assistant_v2_db') }}"
+    - service: script.turn_on
+      entity_id: script.repack_db
+    - wait_template: "{{ (states('sensor.home_assistant_v2_db') |float ) < (states('input_text.previous_dimension_db') |float) }}"
+      timeout: '00:30:00'
+      continue_on_timeout: 'false'
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*-- Repack DB Home Assistant --*'
+        message: >
+          Repack DB completato alle {{ states('sensor.time') }},
+          dimensione precedente DB: {{ states('input_text.previous_dimension_db') }}, 
+          dimensione attuale DB: {{ states('sensor.home_assistant_v2_db') }}
+          Ridotto del {{ ((states('input_text.previous_dimension_db')|float / (states('sensor.home_assistant_v2_db')|float))*100 - 100) | round(2) }}%
+        target: !secret chat_id1
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.repack_status
+        value: DB ridotto del {{ ((states('input_text.previous_dimension_db')|float / (states('sensor.home_assistant_v2_db')|float))*100 - 100) | round(2) }}%
+
+#########################################################
+#                                                       #
+#                          END                          #
+#                                                       #
+#########################################################

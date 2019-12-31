@@ -1,0 +1,28 @@
+# Raspberry Pi Cooling Fan
+sensor:
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
+    scan_interval: 10
+switch:
+  - platform: rpi_gpio
+    ports:
+      25: RPI Cooling Fan
+climate:
+  - platform: generic_thermostat
+    name: RPI Cooling Fan Controller
+    heater: switch.rpi_cooling_fan
+    target_sensor: sensor.cpu_temperature
+    min_temp: 35
+    max_temp: 70
+    ac_mode: true
+    target_temp: 50
+    cold_tolerance: 2
+    hot_tolerance: 2
+    min_cycle_duration:
+      seconds: 30
+    keep_alive:
+      minutes: 5
+    initial_hvac_mode: "cool"

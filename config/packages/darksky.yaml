@@ -1,0 +1,209 @@
+########################################################################
+### Meteo DarkSky V. 2.01 - 12.01.19
+########################################################################
+# Aggiungere le icone in presenti nello .zip
+# /home/homeassistant/.homeassistant/www/icons/dark_sky/
+ 
+#### Customization
+homeassistant:
+  customize_glob:
+    sensor.dark_sky_temperature:
+      friendly_name: Temperatura
+    sensor.dark_sky_humidity:
+      friendly_name: Umidità
+    sensor.dark_sky_wind_speed:
+      friendly_name: Velocità Vento
+    sensor.dark_sky_precip_intensity:
+      friendly_name: Intensità Precipitazioni
+    sensor.dark_sky_precip_probability:
+      icon: mdi:weather-lightning-rainy
+      friendly_name: Probabilità Precipitazioni 
+### Sensore meteo
+weather:
+  - platform: darksky
+    name: Piacenza
+    api_key: !secret darksky_api_key
+#    language: it
+    latitude: !secret latitude_home
+    longitude: !secret longitude_home
+    scan_interval:
+      days: 0
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+    units: auto   
+#### SENSOR
+sensor:
+  - platform: darksky
+    api_key: !secret darksky_api_key
+    latitude: !secret latitude_home
+    longitude: !secret longitude_home
+    language: it
+    forecast:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+    monitored_conditions:
+      - summary
+      - icon
+      - temperature
+      - temperature_low
+      - temperature_high
+      - apparent_temperature
+      - humidity
+      - hourly_summary
+      - daily_summary
+      - precip_probability
+      - precip_intensity
+      - wind_bearing
+      - wind_speed
+      - pressure
+    scan_interval:
+      days: 0
+      hours: 1
+      minutes: 0
+      seconds: 0
+      milliseconds: 0
+ 
+  - platform: template
+    sensors:
+      data_e_ora:
+        entity_id: sensor.time
+        value_template: >
+          {{now().strftime("%d/%m/%Y - %H:%M")}}
+        friendly_name: "Data e Ora"
+        icon_template: mdi:calendar-clock
+      
+      dark_sky_summary_tmpl:
+        friendly_name_template: Condizione
+        value_template: >
+          {{ states('sensor.dark_sky_summary') }}
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon.state ~ '.png'}}
+      dark_sky_hourly_summary_tmpl:
+        friendly_name_template: Condizione Giornaliera
+        value_template: >
+          {{ states('sensor.dark_sky_hourly_summary') }}
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_hourly_summary.attributes.entity_picture | replace("/static/images/darksky/","") | replace(".svg","") ~ '.png'}}
+ 
+      dark_sky_wind_dir:
+        friendly_name: 'Direzione Vento'
+        value_template: >-
+          {% set wind_dir = states.sensor.dark_sky_wind_bearing.state %}
+          {% if wind_dir | float<=23 %}Nord [Tramontana]
+          {% elif wind_dir | float>338 %}Nord [Tramontana]
+          {% elif 23 < (wind_dir|float) <=68 %}NE [Grecale]
+          {% elif 68 < (wind_dir|float) <=113 %}Est [Levante]
+          {% elif 113 < (wind_dir|float) <=158 %}SE [Scirocco]
+          {% elif 158 < (wind_dir|float) <=203 %}Sud [Ostro]
+          {% elif 203 < (wind_dir|float) <=248 %}SO [Libeccio]
+          {% elif 248 < (wind_dir|float) <=293 %}Ovest [Ponente]
+          {% elif 293 < (wind_dir|float) <=338 %}NO [Maestrale]
+          {%- endif %}
+        icon_template: mdi:compass
+ 
+      forecast_0:
+        friendly_name_template: Giorno
+        value_template: Max | Min | Pioggia
+        icon_template: mdi:weather-partlycloudy
+      forecast_1:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (1 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_1d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_1d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_1d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_1d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_1d, sensor.dark_sky_overnight_low_temperature_1d, sensor.dark_sky_precip_probability_1d, sensor.date
+      forecast_2:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (2 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_2d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_2d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_2d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_2d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_2d, sensor.dark_sky_overnight_low_temperature_2d, sensor.dark_sky_precip_probability_2d, sensor.date
+      forecast_3:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (3 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_3d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_3d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_3d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_3d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_3d, sensor.dark_sky_overnight_low_temperature_3d, sensor.dark_sky_precip_probability_3d, sensor.date
+      forecast_4:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (4 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_4d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_4d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_4d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_4d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_4d, sensor.dark_sky_overnight_low_temperature_4d, sensor.dark_sky_precip_probability_4d, sensor.date
+      forecast_5:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (5 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_5d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_5d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_5d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_5d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_5d, sensor.dark_sky_overnight_low_temperature_5d, sensor.dark_sky_precip_probability_5d, sensor.date
+      forecast_6:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (6 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_6d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_6d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_6d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_6d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_6d, sensor.dark_sky_overnight_low_temperature_6d, sensor.dark_sky_precip_probability_6d, sensor.date
+      forecast_7:
+        friendly_name_template: >
+          {%- set date = as_timestamp(now()) + (7 * 86400 ) -%}
+          {% set giorno = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"] %}
+          {% set mese = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"] %}
+          {% set m_ok = date | timestamp_custom("%m") | int %}
+          {% set g_ok = date | timestamp_custom("%w") | int %}
+          {{giorno[g_ok] + ' ' + date | timestamp_custom("%d") + ' ' + mese[m_ok - 1]}}
+        value_template: >
+          {{states.sensor.dark_sky_daytime_high_temperature_7d.state|round(0)}}°|{{states.sensor.dark_sky_overnight_low_temperature_7d.state|round(0)}}°|{{states.sensor.dark_sky_precip_probability_7d.state|round(0)}}%
+        entity_picture_template: >-
+          {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon_7d.state ~ '.png'}}
+        entity_id: sensor.dark_sky_daytime_high_temperature_7d, sensor.dark_sky_overnight_low_temperature_7d, sensor.dark_sky_precip_probability_7d, sensor.date
+ 
+########################################################################
+########################################################################
+ 

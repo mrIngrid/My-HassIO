@@ -1,0 +1,224 @@
+homeassistant:
+  customize:
+    script.u5_left:
+      icon: mdi:arrow-left-bold-outline
+
+script:
+  u5_volume_up:
+    alias: "Vol+"
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "VOLUME_UP"
+        
+  u5_volume_down:
+    alias: Vol-
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "VOLUME_DOWN"
+        
+  u5_menu:
+    alias: Menu
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "MENU"
+        
+  u5_home:
+    alias: Home
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "HOME"
+        
+  u5_back:
+    alias: Back
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "BACK"
+        
+  u5_enter:
+    alias: Ok
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "ENTER"
+
+
+  u5_left:
+    alias: Sinistra
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "LEFT"
+        
+  u5_right:
+    alias: Destra
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "RIGHT"
+        
+  u5_down:
+    alias: Giu
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "DOWN"
+        
+  u5_up:
+    alias: Su
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "UP"
+        
+  u5_suspend:
+    alias: Sospendi
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "SUSPEND"
+        
+  u5_power:
+    alias: Power
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "POWER"
+        
+  u5_play:
+    alias: Play
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "input keyevent 126"
+        
+  u5_stop:
+    alias: Stop
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "86"
+        
+  u5_pause:
+    alias: Pause
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "input keyevent 127"
+        
+  u5_mute:
+    alias: Mute
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "MUTE"
+        
+  u5_red:
+    alias: Rosso
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "RED"
+        
+  u5_green:
+    alias: Verde
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "GREEN"
+        
+
+  u5_yellow:
+    alias: Giallo
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "YELLOW"
+        
+  u5_blue:
+    alias: Blu
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "BLUE"
+        
+  u5_netflix:
+    alias: Netflix
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.netflix.ninja/.MainActivity"
+        
+  u5_youtube:
+    alias: Youtube
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.google.android.youtube.tv/com.google.android.apps.youtube.tv.activity.ShellActivity"          
+        
+  u5_live_tv:
+    alias: Live TV
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.pineone.sb/.epicenter.Epicenter"
+        
+  u5_digitalb:
+    alias: DigitAlb
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n tv.digitalb.kudo/com.cubiware.cubigo.activities.TermsAndConditionsActivity"
+        
+  u5_google_play:
+    alias: Google Play
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.android.vending/com.google.android.finsky.tvmainactivity.TvMainActivity"
+        
+  u5_plex:
+    alias: Plex
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.plexapp.android/com.plexapp.plex.activities.SplashActivity"
+        
+  u5_media:
+    alias: Media
+    sequence:
+    - service: androidtv.adb_command
+      data:
+        entity_id: media_player.android_tv
+        command: "am start -a android.intent.action.VIEW -d -n com.himedia.mediacenterentrance/.MainActivityy"
+        
