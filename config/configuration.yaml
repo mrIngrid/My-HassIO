@@ -1,0 +1,347 @@
+homeassistant:
+  time_zone: Europe/Rome
+  packages: !include_dir_named packages 
+  customize: !include customize.yaml
+  latitude: !secret latitude_home
+  longitude: !secret longitude_home  
+# Configure a default setup of Home Assistant (frontend, api, etc)
+  whitelist_external_dirs:
+  - '/config'
+  - '/tmp'
+
+default_config:
+ios:
+mobile_app:
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+http:
+  base_url: xxxxxxx.duckdns.org:8123
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem 
+  
+frontend:
+  themes: !include_dir_merge_named themes/
+
+speedtestdotnet:
+  scan_interval:
+    minutes: 30
+  monitored_conditions:
+    - ping
+    - upload
+    - download
+
+############################################################################
+#https://home-assistant.io/components/recorder/
+recorder:
+  purge_interval: 1
+  purge_keep_days: 3
+  include:
+    domains:
+    - sensor
+    - climate
+    - binary_sensor
+    - light 
+    - automation 
+    - person 
+    - group
+  exclude:
+    entities:
+    - sensor.last_boot
+    - sensor.date
+    - sensor.time
+    - sensor.workday
+    - sun.sun
+    - sensor.moon
+    - sensor.fasi_lunari
+    - sensor.stagioni
+    - sensor.season
+############################################################################
+  
+discovery:
+  ignore:
+    - enigma2
+    - google_cast
+    - daikin
+    - igd
+    - xiaomi_gw
+    - yeelight
+    - samsung_printer
+    #- samsung_tv
+    - songpal
+    
+
+
+remote:
+  - platform: broadlink
+    host: 192.168.1.142
+    mac: 78:0F:77:5A:C1:21
+
+logger:
+  default: error
+  logs:
+    homeassistant.components.androidtv: info
+    
+media_player:
+  - platform: androidtv
+    host: 192.168.1.167
+    name: "Android TV"
+    device_class: androidtv
+    apps:
+      com.google.android.leanbacklauncher: "Android Home"
+      com.pineone.sb: "Live TV"
+    state_detection_rules:
+      'com.pineone.sb':
+        - 'playing':
+            'wake_lock_size': 1
+        - 'standby':
+            'wake_lock_size': 2
+      'com.google.android.leanbacklauncher':
+        - 'paused':
+            'wake_lock_size': 0
+        - 'standby':
+            'wake_lock_size': 2
+#            'media_season_state': 3
+      'com.google.android.youtube.tv':
+        - 'playing':
+#            'media_season_state': 3
+            'wake_lock_size': 2
+        - 'paused':
+            'wake_lock_size': 0
+        - 'standby':
+            'wake_lock_size': 2
+        - 'playing':
+            'wake_lock_size': 0
+
+            
+# Text to speech
+tts:
+  - platform: google_translate
+    cache: true 
+    language: 'it'
+    cache_dir: /tmp/tts
+    time_memory: 300
+    #base_url: https://192.168.1.108:8123
+    #service_name: google_translate_say
+    
+device_tracker:
+
+  - platform: mqtt
+    source_type: bluetooth
+    qos: 1
+    payload_home: 'ON'
+    payload_not_home: 'OFF'
+    devices:
+      nut_mini_ingrid: 'dss_ble2mqtt/30C40A24/casa/d9c86ac45c0f/state'
+      nut_mini_xxxxxx: 'dss_ble2mqtt/30C40A24/casa/c89347a22892/state'
+      nut_mini_yyyyyy: 'dss_ble2mqtt/30C40A24/casa/f5e70469350f/state'
+      nut_mini_zzzzzz: 'dss_ble2mqtt/30C40A24/casa/f6f18c380984/state'
+      amazfit_esp32: 'dss_ble2mqtt/30C40A24/casa/d8803c0e9d76/state'
+
+  - platform: bluetooth_le_tracker
+    new_device_defaults:
+      track_new_devices: true
+      hide_if_away: false  
+  
+  - platform: bluetooth_tracker
+    consider_home: 120
+    interval_seconds: 12
+    new_device_defaults:
+      track_new_devices: true
+      hide_if_away: false
+    
+  - platform: fritz #nmap_tracker
+    interval_seconds: 12 
+    consider_home: 60
+    #hosts: 192.168.1.0/24
+    new_device_defaults:
+      track_new_devices: false
+      hide_if_away: false
+
+#  - platform: google_maps
+#    scan_interval: 12 
+#    username: !secret google_maps_username
+#    max_gps_accuracy: 50
+    
+shell_command: !include shell_commands.yaml
+yeelight: !include yeelights.yaml    
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+input_boolean: !include input_booleans.yaml
+sensor: !include sensors.yaml
+light: !include lights.yaml
+python_script:
+
+
+
+hacs:
+  token: 2566606bdf3xxxxxxxxxxxxxxxxxxxxd35bb12b7e
+  appdaemon: true
+  python_script: true
+  theme: true  
+
+telegram_bot:
+  - platform: polling
+    api_key: '6yyyyyyy653:AAHhxxxxxxxxxxxxxxxxSntTvzzzzz8'
+    #parse_mode: html
+    allowed_chat_ids: 
+    - xxxxxxxx
+    - yyyyyyyy
+      
+notify:
+  - name: notifiche_telegram
+    platform: telegram  
+    chat_id: xxxxxxxx
+  - name: telegram
+    platform: telegram
+    chat_id: yyyyyyyy
+    
+ffmpeg: 
+camera:
+  - platform: ffmpeg
+    name: Dafang
+    input: !secret rtsp_input #-rtsp_transport tcp -i rtsp://root:xxxxxxxxxxxxxxxx@192.168.1.150:8554/unicast
+
+  - platform: generic
+    name: DaFang Generic
+    username: root
+    password: xxxxxxxxxxx
+    authentication: basic
+    still_image_url: https://192.168.1.150/cgi-bin/currentpic.cgi
+    stream_source: rtsp://192.168.1.150:8554/unicast
+    verify_ssl: false
+    scan_interval: 5
+    
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - mac: !secret xiaomi_gateway1_mac #78:11:dc:e1:76:69
+      host: 192.168.1.112
+      key: !secret gateway1_token
+    - mac: !secret 2_xiaomi_gateway1_mac #7C:49:EB:88:F1:D1
+      host: 192.168.1.113
+      key: !secret 2_gateway1_token  
+
+sonoff:
+  username: zzzzzzzzzz@hotmail.it
+  password: xxxxxxxxxxxx
+  scan_interval: 3 #(optional, lower values than 60 won't work anymore!)
+  grace_period: 600 #(optional)
+  api_region: 'eu' #(optional)
+  #entity_prefix: True #(optional)
+  #debug: False #(optional)
+
+api:
+alexa:
+  smart_home:
+    filter:
+      exclude_entities:
+      - media_player.kd55x8509c
+      - media_player.google_home
+      - media_player.echo_dot_di_ingrid 
+      - media_player.main_room
+      - switch.echo_dot_di_ingrid_do_not_disturb_switch
+      - switch.echo_dot_di_ingrid_shuffle_switch
+      - switch.echo_dot_di_ingrid_repeat_switch
+      - switch.dafang_blue_led
+      - switch.dafang_h264_rtsp_server
+      - switch.dafang_ir_filter
+      - switch.dafang_ir_led
+      - switch.dafang_mjpeg_rtsp_server
+      - switch.dafang_motion_detection
+      - switch.dafang_motion_send_mail
+      - switch.dafang_motion_send_telegram
+      - switch.dafang_motion_tracking
+      - switch.dafang_night_mode_auto
+      - switch.dafang_night_mode
+      - switch.dafang_yellow_led
+      - switch.pow_forno
+      - switch.pow_lavatrice
+      - switch.pow_lavastoviglie
+      - switch.pow_asciugatrice
+      - switch.rpi_cooling_fan
+      - climate.rpi_cooling_fan_controller
+      include_entities:
+      - group.tutte_le_luci
+      - sensor.temperature_158d0002b5c9bf
+      - sensor.temperature_158d0002741c97
+      - sensor.temperature_158d000272fe6a
+      - sensor.temperature_158d00023d4fca
+      - sensor.temperature_158d00022c75fa
+      - sensor.wemos1_bme280_temperature
+      - sensor.temperatura_smarther
+      - sensor.salotto_temperature
+      - sensor.outside_temperature_daikinap53646_outside_temperature
+      - sensor.inside_temperature_daikinap53646_inside_temperature
+      - script.u5_power
+      include_domains:
+      - switch
+      - light
+      - lock
+      - camera
+      - climate 
+      - media_player
+      
+google_assistant:
+  project_id: xxxxxx-home-dc43e
+  api_key: !secret api_key_google
+  secure_devices_pin: "12345"
+  exposed_domains:
+    - switch
+    - light
+    - lock
+    - media_player
+    - climate 
+    - sensor
+  entity_config:
+    switch.pow_forno:
+      expose: false
+    switch.pow_lavatrice:
+      expose: false
+    switch.pow_lavastoviglie:
+      expose: false
+    switch.pow_asciugatrice:
+      expose: false
+    switch.rpi_cooling_fan:
+      expose: false
+    climate.rpi_cooling_fan_controller:
+      expose: false
+    lock.ok_google_attiva_allarme:
+      expose: true
+      room: Salotto  
+    media_player.kd55x8509c:
+      expose: false 
+    media_player.google_home: 
+      expose: false
+    media_player.echo_dot_di_ingrid:
+      expose: false 
+    switch.echo_dot_di_ingrid_do_not_disturb_switch:
+      expose: false
+    switch.echo_dot_di_ingrid_shuffle_switch:
+      expose: false
+    switch.echo_dot_di_ingrid_repeat_switch:
+      expose: false
+    switch.dafang_blue_led:
+      expose: false     
+    switch.dafang_h264_rtsp_server:
+      expose: false     
+    switch.dafang_ir_filter:
+      expose: false     
+    switch.dafang_ir_led:
+      expose: false     
+    switch.dafang_mjpeg_rtsp_server:
+      expose: false     
+    switch.dafang_motion_detection:
+      expose: false     
+    switch.dafang_motion_send_mail:
+      expose: false     
+    switch.dafang_motion_send_telegram:
+      expose: false
+    switch.dafang_motion_tracking:
+      expose: false
+    switch.dafang_night_mode_auto:
+      expose: false    
+    switch.dafang_night_mode:
+      expose: false
+    switch.dafang_yellow_led:
+      expose: false        
+      
