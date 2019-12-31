@@ -87,3 +87,4 @@ cards:
     type: 'custom:auto-entities'
 title: Battery Status
 type: 'custom:vertical-stack-in-card'
+
