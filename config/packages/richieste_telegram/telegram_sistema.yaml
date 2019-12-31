@@ -1,0 +1,38 @@
+
+automation:
+- id: infosistema
+  alias: Info Sistema
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /sistema
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Sistema
+  - service: notify.notifiche_telegram
+    data_template:
+
+      message: >- 
+        
+        {{ "\U0001F4BB" }} *SISTEMA*:
+        
+        *Uso CPU*:   {{ states.sensor.processor_use.state }} %
+        
+        *Tempo Attivo*:   {{ states.sensor.time_online.state }} h
+        
+        *Ultimo Riavvio*:   {{ states.sensor.last_boot.state }}
+        
+        *Temp CPU*:   {{ states.sensor.cpu_temperature.state }} °C
+        
+        *Memoria Libera*:   {{ states.sensor.memory_free.state }} Mb
+        
+        *Memoria Usata*:   {{ states.sensor.memory_use_percent.state }} %
+          
+      data:
+        inline_keyboard:
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"

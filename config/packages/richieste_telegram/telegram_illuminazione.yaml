@@ -1,0 +1,624 @@
+################ Menù Luci
+automation:
+- id: infoluci
+  alias: info luci
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /luci
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: luci
+  - service: notify.notifiche_telegram
+    data_template:
+      message: >-
+     
+        {{U0001F4A1}}*MENÙ LUCI*
+        ----------------------------------
+     
+        *Luci Sala*:   {{ states.group.sala.state }}
+        
+        *Luci Corridoio*:   {{ states.group.corridoio.state }}
+        
+        *Luci Cucina*:   {{ states.group.cucina.state }}
+        
+        *Luci Camera Letto*:   {{ states.group.letto.state }}
+        
+        *Luce Bagno*:   {{ states.group.bagno.state }}
+        
+        *Luce Camera Bimbi*:   {{ states.group.bimbi.state }}
+        
+        *Luce Scala*:   {{ states.switch.sonoff_100044994f.state }}
+        
+      data:
+        inline_keyboard:
+        - '{{ "\U0001F6CB" }} Sala:/sala, {{ "\U0001F37D" }} Cucina:/cucina'
+        - '{{ "\U00000FC1" }} Corridoio:/corridoio, {{ "\U0001F6CC" }} Letto:/letto'
+        - '{{ "\U0001F6C0" }} Bagno:/bagno, {{ "\U0001F4D6" }} Bimbi:/bimbi'
+        - '{{ "\U0001F4A1" }} Scala:/scala'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"   
+      
+################ SALA 
+          
+- id: azzionisala
+  alias: azioni luci sala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /sala
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Sala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SALA*'
+      message: "{% if is_state(\"group.sala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendisala, Spegnere:/spegnisala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendisalacompleto
+  alias: accendi sala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendisala
+  action:
+  - service: light.turn_on
+    entity_id: group.sala
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo luci Sala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SALA*'
+      message: "{% if is_state(\"group.sala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendisala, Spegnere:/spegnisala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+
+      
+- id: spegnisalacompleto
+  alias: spegni sala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegnisala
+  action:
+  - service: light.turn_off
+    entity_id: group.sala
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Sala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SALA*'
+      message: "{% if is_state(\"group.sala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendisala, Spegnere:/spegnisala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+
+####################### CUCINA #########################
+- id: azzionicucina
+  alias: azioni luci cucina
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /cucina
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Cucina
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CUCINA*'
+      message: "{% if is_state(\"group.cucina\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendicucina, Spegnere:/spegnicucina'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendicucinacompleto
+  alias: accendi cucina
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendicucina
+  action:
+  - service: light.turn_on
+    entity_id: group.cucina
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo luci Cucina
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CUCINA*'
+      message: "{% if is_state(\"group.cucina\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendicucina, Spegnere:/spegnicucina'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"  
+        
+- id: spegnicucinacompleto
+  alias: spegni cucina
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegnicucina
+  action:
+  - service: light.turn_off
+    entity_id: group.cucina
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Cucina
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CUCINA*'
+      message: "{% if is_state(\"group.cucina\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendisala, Spegnere:/spegnisala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"  
+      
+        
+################ LETTO #################
+          
+- id: azzioniletto
+  alias: azioni luci letto
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /letto
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Letto
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI LETTO*'
+      message: "{% if is_state(\"group.letto\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiletto, Spegnere:/spegniletto'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendilettocompleto
+  alias: accendi letto
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendiletto
+  action:
+  - service: light.turn_on
+    entity_id: group.letto
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Letto
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI LETTO*'
+      message: "{% if is_state(\"group.letto\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiletto, Spegnere:/spegniletto'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: spegnilettocompleto
+  alias: spegni letto
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegniletto
+  action:
+  - service: light.turn_off
+    entity_id: group.letto
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Letto
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI LETTO*'
+      message: "{% if is_state(\"group.letto\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiletto, Spegnere:/spegniletto'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+      
+################ BAGNO ####################
+          
+- id: azzionibagno
+  alias: azioni luci sala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /bagno
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Bagno
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BAGNO*'
+      message: "{% if is_state(\"group.bagno\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendibagno, Spegnere:/spegnibagno'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendibagnocompleto
+  alias: accendi bagno
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendibagno
+  action:
+  - service: light.turn_on
+    entity_id: group.bagno
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Bagno
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BAGNO*'
+      message: "{% if is_state(\"group.bagno\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendisala, Spegnere:/spegnisala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: spegnibagnocompleto
+  alias: spegni bagno
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegnibagno
+  action:
+  - service: light.turn_off
+    entity_id: group.bagno
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Bagno
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BAGNO*'
+      message: "{% if is_state(\"group.bagno\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendibagno, Spegnere:/spegnibagno'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+        
+################ Bimbi ####################
+          
+- id: azzionibimbi
+  alias: azioni luci bimbi
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /bimbi
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Bimbi
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BIMBI*'
+      message: "{% if is_state(\"group.bimbi\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendibimbi, Spegnere:/spegnibimbi'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendibimbicompleto
+  alias: accendi bimbi
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendibimbi
+  action:
+  - service: light.turn_on
+    entity_id: group.bimbi
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Bimbi
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BIMBI*'
+      message: "{% if is_state(\"group.bimbi\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendibimbi, Spegnere:/spegnibimbi'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: spegnibimbicompleto
+  alias: spegni bimbi
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegnibimbi
+  action:
+  - service: light.turn_off
+    entity_id: group.bimbi
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Bimbi
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI BIMBI*'
+      message: "{% if is_state(\"group.bimbi\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendibimbi, Spegnere:/spegnibimbi'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+
+      
+################ CORRIDOIO #######################
+          
+- id: azzionicorridoio
+  alias: azioni luci corridoio
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /corridoio
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Corridoio
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CORRIDOIO*'
+      message: "{% if is_state(\"group.corridoio\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendicorridoio, Spegnere:/spegnicorridoio'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendicorridoiocompleto
+  alias: accendi corridoio
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendicorridoio
+  action:
+  - service: light.turn_on
+    entity_id: group.corridoio
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo luci Corridoio
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CORRIDOIO*'
+      message: "{% if is_state(\"group.corridoio\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendicorridoio, Spegnere:/spegnicorridoio'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: spegnicorridoiocompleto
+  alias: spegni corridoio
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegnicorridoio
+  action:
+  - service: light.turn_off
+    entity_id: group.corridoio
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Corridoio
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI CORRIDOIO*'
+      message: "{% if is_state(\"group.corridoio\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendicorridoio, Spegnere:/spegnicorridoio'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+
+################ SCALA ################
+- id: azzioniscala
+  alias: azioni luci scala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /scala
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Menú Luci Scala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SCALA*'
+      message: "{% if is_state(\"light.luce_scala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiscala, Spegnere:/spegniscala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: accendiscalacompleto
+  alias: accendi scala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /accendiscala
+  action:
+  - service: light.turn_on
+    entity_id: light.luce_scala
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo luci Scala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SCALA*'
+      message: "{% if is_state(\"light.luce_scala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiscala, Spegnere:/spegniscala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"
+      
+- id: spegniscalacompleto
+  alias: spegni scala
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /spegniscala
+  action:
+  - service: light.turn_off
+    entity_id: light.luce_scala
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Controllo Luci Scala
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*LUCI SCALA*'
+      message: "{% if is_state(\"light.luce_scala\", \"off\") %} Luci Spente {% else\
+        \ %} Luci Accese {% endif %} \n"
+      data:
+        inline_keyboard:
+        - 'Accendere:/accendiscala, Spegnere:/spegniscala'
+        - 'Luci:/luci'
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"  
+        
+        
+        
+        
+        
+        
+        
+ 

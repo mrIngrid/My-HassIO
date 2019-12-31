@@ -1,0 +1,73 @@
+
+automation:
+- id: infosensori
+  alias: info sensori
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /sensori
+  action:
+  - service: telegram_bot.edit_message
+    data_template:
+      message_id: "{{ trigger.event.data.message.message_id }}"
+      chat_id: "{{ trigger.event.data.message.chat.id }}"
+      title: "*SENSORI*"
+      message: >-
+        
+        '{{ "\U0001F6AA" }} *Stato Infissi*:'
+       
+        ----------------------------------------
+       
+        "Serratura Blindata: {{ states.binary_sensor.door_window_sensor_158d0001e64513.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}"
+       
+        "Porta Blindata: {{ states.binary_sensor.door_window_sensor_158d000203052a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}"
+       
+        "Finestra Salotto: {{ states.binary_sensor.door_window_sensor_158d000221825a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+       
+        "Porta Cucina: {{ states.binary_sensor.door_window_sensor_158d0001f39528.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+       
+        "Porta Camera Letto: {{ states.binary_sensor.door_window_sensor_158d000202ddff.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+       
+        "Finestra Bimbi: {{ states.binary_sensor.door_window_sensor_158d0002254081.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}"  
+       
+        "Finestra Bagno: {{ states.binary_sensor.door_window_sensor_158d0001f9e58a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+       
+        "Finestra Scala: {{ states.binary_sensor.door_window_sensor_158d0002536dab.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+      
+        -----------------------------------------
+       
+        {{ "\U0001F321" }} *TEMPERATURE INTERNO*:
+       
+        " Temp Cucina: {{ states.sensor.temperature_158d0002741c97.state }} °c"
+       
+        " Temp Camera Bimbi: {{ states.sensor.temperature_158d000272fe6a.state }} %"
+       
+        " Temp Camera Letto: {{ states.sensor.temperature_158d00022c75fa.state }} mb"
+       
+        " Temp Corridoio: {{ states.sensor.inside_temperature_daikinap53646_inside_temperature.state }} c"
+       
+        " Temp Bagno: {{ states.sensor.temperature_158d00023d4fca.state }} °c"
+       
+        " Umidità Interna: {{ states.sensor.humidity_158d00022c75fa.state }} %"
+       
+        " Pressione Interna: {{ states.sensor.pressure_158d00022c75fa.state }} mb"
+      
+        -----------------------------------------
+      
+        {{ "\U0001F321" }} *TEMPERATURE ESTERNO*:    
+      
+        "Temp Esterna Daikin: {{ states.sensor.outside_temperature_daikinap53646_outside_temperature.state }} °c"
+       
+        "Temp Scala: {{ states.sensor.temperature_158d0002b5c9bf.state }} °c"
+       
+        "Umiditá Scala: {{ states.sensor.humidity_158d0002b5c9bf.state }} %"
+       
+        "Pressione Scala: {{ states.sensor.pressure_158d0002b5c9bf.state }} mb"        
+      
+      inline_keyboard:
+        - "{{ '\U0001f6d1' }} Chiudi:/removekeyboard"
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"       
+        

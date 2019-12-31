@@ -1,0 +1,1085 @@
+########################################################################
+### TELEGRAM BOTTON
+########################################################################
+homeassistant:
+
+#################################################################
+##                      Input number
+#################################################################
+input_number:
+  soglia_min_batt:
+    name: Soglia min batt bot telegram
+    min: 1
+    max: 100
+    step: 5
+    initial: 1
+  soglia_max_batt:
+    name: Soglia max batt bot telegram
+    min: 1
+    max: 100
+    step: 5  
+    initial: 100
+
+automation:
+
+#- alias: "Startup Notification"
+#  initial_state: 'on'
+#  trigger:
+#  - platform: homeassistant
+#    event: start
+#  action:
+#  - service: notify.notifiche_telegram
+#    data:
+#      title: '*Hassio*'
+#      message: '_home Assistant e operativo_ IP: {{ states.sensor.myip.state }}'      
+#      data:
+#        inline_keyboard:
+#          - 'Ping:/ping, TestGtw:/gateway, Luci:/luci, Allarme:/allarme'
+#          - 'TempINcasa:/intcond, TempFuori:/estcond'
+#          - 'StatSens:/statsens, BatLevel:/battlvl, Camera:/cam, Riavvia:/riavvia'            
+#        target: "{{ trigger.event.data.user_id }}" 
+#        - !secret allowed_chat_ids
+#        - !secret allowed_chat_ids2  
+
+        
+- alias: "Command home"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: /home
+  action: 
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Old Notify  
+  - service: notify.notifiche_telegram
+    data_template:
+      title: '*AjdiniHome*'
+      message: 'Scegli i commandi'
+      data:
+        inline_keyboard:
+          - 'Ping:/ping, TestGtw:/gateway, Luci:/luci, Allarme:/allarme'
+          - 'TempINcasa:/intcond, TempFuori:/estcond'
+          - 'StatSens:/statsens, BatLevel:/battlvl, Camera:/cam, Riavvia:/riavvia' 
+      target: "{{ trigger.event.data.user_id }}"   
+      
+- alias: "Int Condition"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/intcond'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: ' *Condizione Interna* '
+        message: >
+          " Temp Cucina: {{ states.sensor.temperature_158d0002741c97.state }} °c"
+          
+          " Temp Camera Bimbi: {{ states.sensor.temperature_158d000272fe6a.state }} %"
+          
+          " Temp Camera Letto: {{ states.sensor.temperature_158d00022c75fa.state }} mb"
+          
+          " Temp Corridoio: {{ states.sensor.inside_temperature_daikinap53646_inside_temperature.state }} c"
+          
+          " Temp Bagno: {{ states.sensor.temperature_158d00023d4fca.state }} °c"
+          
+          " Umidità Interna: {{ states.sensor.humidity_158d00022c75fa.state }} %"
+          
+          " Pressione Interna: {{ states.sensor.pressure_158d00022c75fa.state }} mb"
+          
+        data:
+          inline_keyboard:
+            - 'MENU:/home'
+        target: "{{ trigger.event.data.user_id }}"
+
+
+ 
+- alias: "Est Condition"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/estcond'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: ' *Condizione Esterna* '
+        message: >
+          "Temp Esterna Daikin: {{ states.sensor.outside_temperature_daikinap53646_outside_temperature.state }} °c"
+          
+          "Temp Scala: {{ states.sensor.temperature_158d0002b5c9bf.state }} °c"
+          
+          "Umiditá Scala: {{ states.sensor.humidity_158d0002b5c9bf.state }} %"
+          
+          "Pressione Scala: {{ states.sensor.pressure_158d0002b5c9bf.state }} mb"
+        data:
+          inline_keyboard:
+            - 'MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+
+          
+- alias: "Stato Sensori"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/statsens'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: ' *Stato Sensori Infissi* '
+        message: >
+          "Serratura Blindata: {{ states.binary_sensor.door_window_sensor_158d0001e64513.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Porta Blindata: {{ states.binary_sensor.door_window_sensor_158d000203052a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Finestra Salotto: {{ states.binary_sensor.door_window_sensor_158d000221825a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Porta Cucina: {{ states.binary_sensor.door_window_sensor_158d0001f39528.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Porta Letto: {{ states.binary_sensor.door_window_sensor_158d000202ddff.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Finestra Bimbi: {{ states.binary_sensor.door_window_sensor_158d0002254081.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}"  
+          
+          "Finestra Bagno: {{ states.binary_sensor.door_window_sensor_158d0001f9e58a.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+          
+          "Finestra Scala: {{ states.binary_sensor.door_window_sensor_158d0002536dab.state |replace('on', 'Aperta')|replace('off', 'Chiusa') }}" 
+        data:
+          inline_keyboard:
+            - 'MENU:/home'
+        target: "{{ trigger.event.data.user_id }}"
+  
+
+- alias: "Battery Level"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/battlvl'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: ' *Battery Level* '
+        message: >-
+          "Blindata Sensor: {{ states.binary_sensor.door_window_sensor_158d000203052a.attributes.battery_level }} %"
+          
+          "Serratura Sensor: {{ states.binary_sensor.door_window_sensor_158d0001e64513.attributes.battery_level }} %"
+          
+          "Salotto Sensor: {{ states.binary_sensor.door_window_sensor_158d000221825a.attributes.battery_level }} %"
+          
+          "Cucina Sensor: {{ states.binary_sensor.door_window_sensor_158d0001f39528.attributes.battery_level }} %"
+          
+          "Letto Sensor: {{ states.binary_sensor.door_window_sensor_158d000202ddff.attributes.battery_level }} %"
+          
+          "Bimbi Sensor: {{ states.binary_sensor.door_window_sensor_158d0002254081.attributes.battery_level }} %"
+          
+          "Bagno Sensor: {{ states.binary_sensor.door_window_sensor_158d0001f9e58a.attributes.battery_level }} %"
+          
+          "Scala Sensor: {{ states.binary_sensor.door_window_sensor_158d0002536dab.attributes.battery_level }} %"
+          
+          "PIR Scala: {{ states.binary_sensor.motion_sensor_158d0001f9d4ee.attributes.battery_level }} %"
+          
+          "PIR Sala: {{ states.binary_sensor.motion_sensor_158d0001e5238b.attributes.battery_level }} %"
+          
+          "PIR Bagno: {{ states.binary_sensor.motion_sensor_158d00020dee74.attributes.battery_level }} %"
+          
+          "Switch Bagno: {{ states.binary_sensor.switch_158d0001e5cbeb.attributes.battery_level }} %"
+          
+          "Switch 1: {{ states.binary_sensor.switch_158d0002131344.attributes.battery_level }} %"
+          
+          "Switch 2: {{ states.binary_sensor.switch_158d0002131396.attributes.battery_level }} %"
+          
+          "Switch 3: {{ states.binary_sensor.switch_158d00021313e1.attributes.battery_level }} %"
+          
+          "Switch Allarme: {{ states.binary_sensor.switch_158d000228651e.attributes.battery_level }} %"
+          
+          "Sensore Acqua: {{ states.binary_sensor.water_leak_sensor_158d0002138b66.attributes.battery_level }} %"
+          
+          "Sensore Cubo: {{ states.binary_sensor.cube_158d00027cee95.attributes.battery_level }} %"
+          
+          "Temp Cucina: {{ states.sensor.salotto_battery.attributes.battery_level }} %"          
+          
+          "Temp Cucina: {{ states.sensor.temperature_158d0002741c97.attributes.battery_level }} %"
+          
+          "Temp Camera Bimbi: {{ states.sensor.temperature_158d000272fe6a.attributes.battery_level }} %"
+          
+          "Temp Camera Letto: {{ states.sensor.temperature_158d00022c75fa.attributes.battery_level }} %"
+          
+          "Temp Bagno: {{ states.sensor.temperature_158d00023d4fca.attributes.battery_level }} %"
+          
+          "Temp Scala: {{ states.sensor.temperature_158d0002b5c9bf.attributes.battery_level }} %"
+          
+          "Temp Interna: {{ states.sensor.temperature_158d00022c75fa.attributes.battery_level }} %"        
+        
+#          {% macro batt_level() %}
+#          {% set upthreshold = states.input_number.soglia_max_batt.state | int %}
+#          {% set downthreshold = states.input_number.soglia_min_batt.state | int %}
+#          {% for state in states.sensor %}
+#          {% if state.name.endswith('_level') and (state.state | int >= upthreshold or state.state | int <= downthreshold)%}
+#          {{state.name}} = {{state.state_with_unit}}{% endif %}{% endfor %}
+#          {% endmacro %}
+#          {{ batt_level() }}
+        data:
+          inline_keyboard:
+            - 'home:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+       
+
+
+#- alias: "Location office"
+##  hide_entity: true
+#  #initial_state: 'off'
+#  trigger:
+#    platform: event
+#    event_type: telegram_callback
+#    event_data:
+#        data: '/office'
+#  action:
+#    - service: notify.notifiche_telegram
+#      data:
+#        message: '*Localita Lavoro:*'
+#        target: "{{ trigger.event.data.user_id }}"
+#          - !secret allowed_chat_ids        
+#    #- delay: 0:0:05
+#    - service: notify.notifiche_telegram
+#      data:
+#        message: ' '
+#        data:
+#          location:
+#            latitude: 44.9657
+#          inline_keyboard:
+#            longitude: 9.7379
+#            - 'MENU:/home'
+#        target: "{{ trigger.event.data.user_id }}"
+#          - !secret allowed_chat_ids            
+#
+- alias: "Telegram ping pong"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: '/ping'
+  action:
+    - service: telegram_bot.answer_callback_query
+      data_template:
+        # parse_mode: html
+        callback_query_id: '{{ trigger.event.data.id }}'
+        message: >-
+          Richiesta da {{ trigger.event.data.from_first }}.
+          messaggio n. {{ trigger.event.data.message.message_id }}.
+          del: {{ trigger.event.data.data }}.
+          {{ now().strftime("%Y-%m-%d %H:%M:%S") }}.
+          Messaggio da {{ trigger.event.data["user_id"] }}.
+          IP: {{ states.sensor.myip.state }}. 
+        target: "{{ trigger.event.data.user_id }}"          
+        show_alert: true       
+
+- alias: "Riavvia"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: '/riavvia'
+  action:
+    - service: homeassistant.restart  
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Riavvio di Hassio*'
+        message: >
+          "Riavvio di Hassio in corso"
+        target: "{{ trigger.event.data.user_id }}"
+
+    
+- alias: "Luci"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/luci'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Controlloluci*'
+        message: > 
+          "Controllo Luci, premi per lo switch"         
+        data:
+          inline_keyboard:
+            - 'Salotto:/salotto, Corridoio:/corridoio, Cucina:/cucina'
+            - 'Camera:/camera, Bimbi:/bimbi, Bagno:/bagno, Z_Notte:/znotte'
+            - 'MENU:/home'       
+        target: "{{ trigger.event.data.user_id }}" 
+         
+- alias: "tgSalotto"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/salotto'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Salotto*'
+        message: > 
+          "Luci Salotto, premi per lo switch"           
+        data:
+          inline_keyboard:
+            - 'LampadarioSalotto:/lampadariosalotto'          
+            - 'FarettiSala:/farettisalotto, MinibarSala:/minibar'
+        target: "{{ trigger.event.data.user_id }}"
+
+- alias: "tgLampadarioSalotto"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/lampadariosalotto'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Lampadario Salotto*'
+        message: > 
+          "Passo da: {{states.light.lampadario_salotto.state}}"
+        target: "{{ trigger.event.data.user_id }}"
+          
+    - data:
+        entity_id: light.lampadario_salotto
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Lampadario Salotto*'
+        message: > 
+          "a: {{states.light.lampadario_salotto.state}}"           
+        data:
+          inline_keyboard:
+            - 'MENU:/home'       
+        target: "{{ trigger.event.data.user_id }}"
+ 
+ 
+- alias: "tgFarettiSalotto"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/farettisalotto'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretti Salotto*'
+        message: > 
+          "Passo da: {{states.light.faretti_salotto.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+            
+    - data:
+        entity_id: light.faretti_salotto
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretti Salotto*'
+        message: > 
+          "a: {{states.light.faretti_salotto.state}}"
+        target: "{{ trigger.event.data.user_id }}"
+          
+        data:
+          inline_keyboard:
+            - 'MENU:/home'       
+
+- alias: "tgMinibar"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/minibar'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Minibar Salotto*'
+        message: > 
+          "Passo da: {{states.light.faretti_minibar.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+          
+    - data:
+        entity_id: light.faretti_minibar
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretti Minibar*'
+        message: > 
+          "a: {{states.light.faretti_minibar.state}}"            
+        data:
+          inline_keyboard:
+            - 'MENU:/home'       
+        target: "{{ trigger.event.data.user_id }}" 
+  
+         
+- alias: "tgCorridoio"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/corridoio'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Salotto*'
+        message: > 
+          "Luci Salotto, premi per lo switch"        
+        data:
+          inline_keyboard:
+            - 'FarettiCorridoio:/faretticorridoio, FarettiFotoChloe:/farettifotochloe'           
+        target: "{{ trigger.event.data.user_id }}" 
+  
+
+
+- alias: "tgFarettiCorridoio"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/faretticorridoio'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretti Corridoio*'
+        message: > 
+          "Passo da: {{states.light.faretti_corridoio.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+   
+    - data:
+        entity_id: light.faretti_corridoio
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Corridoio*'
+        message: > 
+          "a: {{states.light.faretti_corridoio.state}}"                     
+        data:
+          inline_keyboard:
+            - 'Corridoio:/corridoio, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+              
+         
+- alias: "tgFarettiFotoChloe"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/farettifotochloe'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretti Foto Chloe*'
+        message: > 
+          "Passo da: {{states.light.faretti_foto_chloe.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+       
+    - data:
+        entity_id: light.faretti_foto_chloe
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*tgFarettiFotoChloe*'
+        message: > 
+          "a: {{states.light.faretti_foto_chloe.state}}"                   
+        data:
+          inline_keyboard:
+            - 'Corridoio:/corridoio, Luci:/luci, MENU:/home'  
+        target: "{{ trigger.event.data.user_id }}" 
+  
+         
+- alias: "tgCucina"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/cucina'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Cucina*'
+        message: > 
+          "Luci Cucina, premi per lo switch"         
+        data:
+          inline_keyboard:
+            - 'Faretto1:/faretto1, Faretto2:/faretto2, Faretto3:/faretto3'
+            - 'LampadarioCucina:/lampadariocucina'
+        target: "{{ trigger.event.data.user_id }}" 
+   
+ 
+- alias: "tgLampadarioCucina"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/lampadariocucina'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*LampadarioCucina*'
+        message: > 
+          "Passo da: {{states.light.luce_cucina.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+           
+    - data:
+        entity_id: light.luce_cucina
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*LampadarioCucina*'
+        message: > 
+          "a: {{states.light.luce_cucina.state}}"           
+        data:
+          inline_keyboard:
+            - 'Cucina:/cucina, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+
+- alias: "tgFaretto1"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/faretto1'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto1*'
+        message: > 
+          "Passo da: {{states.light.faretto_cucina_1.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+          
+    - data:
+        entity_id: light.faretto_cucina_1
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto1*'
+        message: > 
+          "a: {{states.light.faretto_cucina_1.state}}"
+        data:
+          inline_keyboard:
+            - 'Cucina:/cucina, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+     
+
+- alias: "tgFaretto2"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/faretto2'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto2*'
+        message: > 
+          "Passo da: {{states.light.faretto_cucina_2.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+         
+    - data:
+        entity_id: light.faretto_cucina_2
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto2*'
+        message: > 
+          "a: {{states.light.faretto_cucina_2.state}}"
+        data:
+          inline_keyboard:
+            - 'Cucina:/cucina, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+     
+
+- alias: "tgFaretto3"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/faretto3'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto3*'
+        message: > 
+          "Passo da: {{states.light.faretto_cucina_3.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+        
+    - data:
+        entity_id: light.faretto_cucina_3
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Faretto3*'
+        message: > 
+          "a: {{states.light.faretto_cucina_3.state}}"
+        data:
+          inline_keyboard:
+            - 'Cucina:/cucina, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+                          
+- alias: "tgCamera"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/camera'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Camera*'
+        message: > 
+          "Luci Camera, premi per lo switch"
+        data:
+          inline_keyboard:
+            - 'LuceCamera:/lucecamera, Bedside:/bedside'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+         
+- alias: "tgLuceCamera"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/lucecamera'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*LuceCamera*'
+        message: > 
+          "Passo da: {{states.light.yeelight_2.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+          
+    - data:
+        entity_id: light.yeelight_2
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*LuceCamera*'
+        message: > 
+          "a: {{states.light.yeelight_2.state}}"
+        data:
+          inline_keyboard:
+            - 'LuceCamera:/lucecamera, Camera:/camera, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+        
+         
+- alias: "tgBedside"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/bedside'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Bedside*'
+        message: > 
+          "Passo da: {{states.light.bedside_comodino.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+        
+    - data:
+        entity_id: light.bedside_comodino
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Bedside*'
+        message: > 
+          "a: {{states.light.bedside_comodino.state}}"
+        data:
+          inline_keyboard:
+            - 'Bedside:/bedside, Camera:/camera, Luci:/luci, MENU:/home'     
+        target: "{{ trigger.event.data.user_id }}" 
+   
+         
+- alias: "tgZonaNotte"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/znotte'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*ZonaNotte*'
+        message: > 
+          "Passo da: {{states.light.zona_notte.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+         
+    - data:
+        entity_id: group.camera_letto
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*ZonaNotte*'
+        message: > 
+          "a: {{states.light.zona_notte.state}}"
+        data:
+          inline_keyboard:
+            - 'ZonaNotte:/znotte, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+        
+
+ 
+- alias: "tgBagno"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/bagno'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Bagno*'
+        message: > 
+          "Luci Bagno, premi per lo switch"
+        data:
+          inline_keyboard:
+            - 'Plafoniera:/plafobagno, Specchio:/specchiobagno'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+         
+- alias: "tgSpecchioBagno"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/specchiobagno'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*SpecchioBagno*'
+        message: > 
+          "Passo da: {{states.light.led_specchio_bagno.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+         
+    - data:
+        entity_id: light.led_specchio_bagno
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*SpecchioBagno*'
+        message: > 
+          "a: {{states.light.led_specchio_bagno.state}}"
+        data:
+          inline_keyboard:
+            - 'Specchio:/specchiobagno, Bagno:/bagno, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+        
+         
+- alias: "tgPlafonieraBagno"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/plafobagno'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*PlafonieraBagno*'
+        message: > 
+          "Passo da: {{states.light.plafoniera_bagno.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+        
+    - data:
+        entity_id: light.plafoniera_bagno
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*PlafonieraBagno*'
+        message: > 
+          "a: {{states.light.plafoniera_bagno.state}}"
+        data:
+          inline_keyboard:
+            - 'Plafoniera:/plafobagno, Bagno:/bagno, Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+                   
+ 
+- alias: "tgBimbi"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/bimbi'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Bimbi*'
+        message: > 
+          "Passo da: {{states.light.yeelight_1.state}}"
+        target: "{{ trigger.event.data.user_id }}" 
+         
+    - data:
+        entity_id: group.bimbi
+      service: light.toggle
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Bimbi*'
+        message: > 
+          "a: {{states.light.yeelight_1.state}}"
+        data:
+          inline_keyboard:
+            - 'Luci:/luci, MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+  
+ 
+
+####################################################
+#                                                  #
+#                    CAMERA                        #
+#                                                  #
+####################################################
+
+- alias: 'Telegram bot that reply to camera'
+  hide_entity: true
+  initial_state: 'on'  
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: '/cam'
+  action:
+  - service: notify.notifiche_telegram
+    data_template:
+      message: "Foto Dafang {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+      data: 
+        photo:
+          url: 'https://xxxxxxxxxx.duckdns.org:8123{{states.camera.dafang.attributes.entity_picture}}'
+          caption: '{{now().strftime("%d.%m.%Y-%H:%M:%S")}}'
+        inline_keyboard:
+        - 'home:/home' 
+        target: "{{ trigger.event.data.user_id }}" 
+
+#
+#- alias: "Snapshot cam"
+#  hide_entity: true
+#  #initial_state: 'off'
+#  trigger:
+#  - platform: event
+#    event_type: telegram_callback
+#    event_data:
+#        data: '/cam'
+#  action:
+#    - service: camera.snapshot
+#      data:
+#        entity_id: camera.dafang
+#        filename: '/tmp/ip_webcam.jpg'
+#    - service: shell_command.log
+#      data_template:
+#        text: >
+#          - Cam snapshot save on /tmp/ip_webcam.jpg
+#    - service: notify.notifiche_telegram
+#      data_template:
+#        title: 'Photo: *cam*'
+#        message: "DateTime {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+#        target: "{{ trigger.event.data.user_id }}"
+#          - !secret allowed_chat_ids        
+#    - delay: '00:00:10'
+#    - service: notify.notifiche_telegram
+#      data:
+#        data:
+##        message: "cam photo"
+#            url: 'https://xxxxxxxx.duckdns.org:8123{{states.camera.dafang.attributes.entity_picture}}'
+#          photo:
+#          inline_keyboard:
+#            - 'home:/home'
+#        target: "{{ trigger.event.data.user_id }}"
+#          - !secret allowed_chat_ids            
+#    - service: shell_command.log
+#      data_template:
+#        text: >
+#          - Photo send to Telegram
+#
+- alias: "Test Gateway"
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+        data: '/gateway'
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Test Gateway start*'
+        message: "DateTime {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+        data:
+          inline_keyboard:
+            - 'MENU:/home'
+        target: "{{ trigger.event.data.user_id }}" 
+      
+    - delay: '00:00:03'
+    - service: light.turn_on
+      entity_id: light.gateway_light_7811dce17669
+      data:
+        brightness: 250
+        rgb_color: [153, 255, 102]
+    - service: shell_command.log
+      data_template:
+        text: >
+          - Test Gateway start. Light ON
+    - delay: '00:00:03'
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: !secret xiaomi_gateway1_mac
+        ringtone_id: 10
+        ringtone_vol: 1
+    - service: shell_command.log
+      data_template:
+        text: >
+          - Test Gateway. Play ON
+    - delay: '00:00:03'
+    - service: xiaomi_aqara.stop_ringtone
+    - service: shell_command.log
+      data_template:
+        text: >
+          - Test Gateway. Play OFF
+    - service: light.turn_off
+      entity_id: light.gateway_light_7811dce17669
+      
+      
+
+########################################################################
+### XIAOMI SENSOR
+########################################################################
+
+#- alias: "Turn on light on motion"
+#  trigger:
+#    - platform: state
+#      entity_id: binary_sensor.motion_sensor_158d0001e5238b
+#      from: 'off'
+#      to: 'on'
+#  condition:
+#    condition: time
+#    after: '20:00:00'
+#    before: '08:00:00'  
+#  action:
+#    - service: light.turn_on
+#      entity_id: light.gateway_light_7811dce17669
+#      data:
+#        brightness: 250
+#        rgb_color: [241, 236, 225]
+#    - delay: '00:00:10'
+#    - service: light.turn_off
+#      entity_id: light.gateway_light_7811dce17669
+
+
+
+########################################################################
+### DISK SPACE
+########################################################################
+
+- alias: Spazio Libero
+  initial_state: 'on'
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.disk_use_percent
+    above: 85
+    below: 90
+  action:
+    - service: notify.notifiche_telegram
+      data_template:
+        title: '*Alert:* lo spazio nella SD sta per finire!'
+        message: "Notify you at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+        target: "{{ trigger.event.data.user_id }}" 
+          
+        data:
+          inline_keyboard:
+            - 'MENU:/home'
+
+       
+          
+########################################################################
+### TEMPERATURE AUTOMATIONS
+########################################################################
+
+- alias: Notifica Temp Bassa
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.temperatura_smarther
+    below: 20
+  action:
+    service: script.my_notify #notify.notifiche_telegram
+    data_template:
+      title: "\U0001F321*Avviso temperatura in casa*"
+      message: "_La temperatura in casa e scesa a {{ states.sensor.temperatura_smarther.state }}°._"
+      target:
+      - !secret allowed_chat_ids 
+
+#- alias: 'Update Sensore Temperatura'
+#  initial_state: 'on'
+#  trigger:
+#  - platform: template
+#    value_template: '{{ (as_timestamp(now())-as_timestamp(states.sensor.salotto_temperature.last_updated)) <= 4 }}'
+#  action:
+#  - service: notify.notifiche_telegram
+#    data_template: 
+#      title: "\U0001F321*Avviso temperatura in casa*"    
+#      message: '_La temperatura in casa è cambiata a {{ states.sensor.salotto_temperature.state }}°._'
+#      target:
+#      - !secret allowed_chat_ids
+#  - service: automation.turn_off
+#    entity_id: automation.update_sensore_temperatura
+#  - delay: '04:00:00'
+#  - service: automation.turn_on
+#    entity_id: automation.update_sensore_temperatura 
+    

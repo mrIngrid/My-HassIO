@@ -1,0 +1,32 @@
+automation:
+- id: infometeo
+  alias: info meteo
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /meteo
+  action:
+  - service: telegram_bot.answer_callback_query
+    data_template:
+      callback_query_id: '{{ trigger.event.data.id }}'
+      message: Meteo
+  - service: notify.notifiche_telegram
+    data_template:
+
+      message: >- 
+        
+        {{ "\U00002600" }} *METEO*:
+        ------------------------------------------------
+        
+        *Tempo*:   {{ states.sensor.dark_sky_summary_tmpl.state}}
+        
+        *Temp. domani Max/Min*:   {{ states.sensor.dark_sky_daytime_high_temperature_1d.state}}/{{ states.sensor.dark_sky_overnight_low_temperature_1d.state}} °C
+        
+        *Previsioni*:   {{ states.sensor.dark_sky_hourly_summary_tmpl.state}}
+        
+      data:
+        inline_keyboard:
+        - '{{ "\u21a9\ufe0f" }} Menú Principale:/stop'
+      target: "{{ trigger.event.data.user_id }}"       

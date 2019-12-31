@@ -1,0 +1,39 @@
+automation:
+- alias: Telegram_Bot_Start
+  hide_entity: true
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: telegram_command
+    event_data:
+      command: /start
+  action:
+  - service: notify.notifiche_telegram
+    data_template:
+      title: Benvenuto
+      message: '*PANNELLO DI CONTROLLO*'
+      data:
+        inline_keyboard:
+        - '{{ "\U0001F6A8" }} Sicurezza:/allarme,{{ "\U0001F4A1" }} Luci:/luci' 
+        - '{{ "\U0001F4BB" }} Sistema:/sistema,{{ "\U0001F6AA" }} Sensori:/sensori'
+        - '{{ "\U00002600" }} Meteo:/meteo,{{ "\U0001F4C4" }} OldHome:/home'
+      target: "{{ trigger.event.data.user_id }}"
+
+- alias: Telegram_Bot_Stop
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: telegram_callback
+    event_data:
+      data: /stop
+  action:
+  - service: notify.notifiche_telegram
+    data_template:
+      message: '*PANNELLO DI CONTROLLO*'
+      data:
+        inline_keyboard:
+        - '{{ "\U0001F6A8" }} Sicurezza:/allarme,{{ "\U0001F4A1" }} Luci:/luci' 
+        - '{{ "\U0001F4BB" }} Sistema:/sistema,{{ "\U0001F6AA" }} Sensori:/sensori'
+        - '{{ "\U00002600" }} Meteo:/meteo,{{ "\U0001F4C4" }} OldHome:/home'
+      target: "{{ trigger.event.data.user_id }}"
+        
