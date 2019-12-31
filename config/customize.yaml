@@ -1,0 +1,37 @@
+light.yeelight_ceiling1_7811dcab639c:
+  friendly_name: Plafoniera Bagno
+light.yeelight_strip1_7811dca22067:
+  friendly_name: Strip Led Salotto
+light.yeelight_bslamp1_7811dc915929:
+  friendly_name: Bedside Comodino
+light.yeelight_strip1_7811dc685911:
+  friendly_name: Led Corridoio
+light.yeelight_color2_7c49eb1569f5:
+  friendly_name: Camera Bimbi
+light.yeelight_color2_7c49eb1579ea:
+  friendly_name: Luce Camera Letto
+person.ingrid:
+  entity_picture: https://www.life360.com/img/user_images/yxyxyxyxyxyxyxyxy5-4f80-a1bf-83913xyxyxyxyxyxyyxyxyxyxyx51.png?fd=2
+person.xxxxxx:
+  entity_picture: https://www.life360.com/img/user_images/97675xxxxxxxxxxxxxxxxxxxxxxx-26b5-44dyyyyyyyyyyyyyyyya167f.jpg?fd=2
+group.faretti_cucina:
+  friendly_name: Gruppo Faretti
+  icon: mdi:lightbulb
+switch.plug_158d0001bc31cb:
+  device_class: plug
+automation.attivazione_automatica_deumidificatore_umidita:
+  friendly_name: Attivazione Automatica Unita
+  icon: mdi:air-purifier
+automation.notifica_umidita:
+  friendly_name: Notifica Umidità Elevata
+  icon: mdi:air-humidifier
+switch.gestione_umidita:
+  friendly_name: Gestione Umidita
+  icon: mdi:power
+switch.presa_j15:
+  friendly_name: Deumidificatore
+  icon: mdi:power
+switch.oittm_aroma:
+  icon: mdi:air-filter
+device_tracker.life360_ingrid:
+  entity_picture: /local/immagini/ingrid.jpg

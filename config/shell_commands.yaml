@@ -1,0 +1,5 @@
+#snapshotv: !secret snapv
+
+#dafang_ipcam_mp4: "bash -x /config/ffmpeg/ipcam2_mp4.sh > /config/ffmpeg/ipcam2_mp4.log 2>&1 &"
+
+#dss_dahua_doorbell_ipcam_mp4: "bash -x /config/ffmpeg/ipcam2_mp4.sh > /config/ffmpeg/ipcam2_mp4.log 2>&1 &"

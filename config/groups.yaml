@@ -1,0 +1,66 @@
+sala:
+  entities:
+  - light.shelly1_32cacb_relay_0
+  - light.shelly1_32d081_relay_0
+  - light.sonoff_minibar
+  - light.led_salotto
+ 
+corridoio:
+  entities:
+  - light.shelly1_326385_relay_0
+  - light.led_corridoio  
+  - light.sonoff_foto
+  - light.shelly1_32b541_relay_0
+
+cucina:
+  entities:
+  - light.shelly1_320204_relay_0
+  - light.faretto_cucina_1
+  - light.faretto_cucina_2
+  - light.faretto_cucina_3
+  
+letto:
+  entities:
+  - light.yeelight_letto
+  - light.bedside_comodino  
+  
+bimbi:
+  entities:
+  - light.yeelight_bimbi  
+  
+bagno:
+  entities:
+  - light.plafoniera_bagno  
+
+notte:
+  entities:
+  - light.shelly1_32b541_relay_0
+
+faretti_cucina:
+  entities:
+  - light.faretto_cucina_1
+  - light.faretto_cucina_2
+  - light.faretto_cucina_3
+  
+#test  
+luci:
+  name: Tutte le luci
+  entities:
+  - light.shelly1_320204_relay_0
+  - light.faretto_cucina_1
+  - light.faretto_cucina_2
+  - light.faretto_cucina_3
+  - light.plafoniera_bagno 
+  - light.yeelight_letto
+  - light.yeelight_bimbi
+  - light.bedside_comodino 
+  - light.led_corridoio  
+  - light.sonoff_foto
+  - light.shelly1_326385_relay_0
+  - light.shelly1_32b541_relay_0
+  - light.shelly1_32cacb_relay_0
+  - light.shelly1_32d081_relay_0
+  - light.shelly1_32b541_relay_0
+  - light.sonoff_minibar
+  - light.led_salotto
+    

@@ -1,0 +1,17 @@
+
+#dafang_prepara_video:
+#  sequence:
+#    - service: shell_command.dafang_ipcam_mp4
+            
+telegram_video:
+  alias: "10 sec mp4"
+  sequence:
+    - service: shell_command.snapshotv
+      data:
+          filename: /tmp/shot1.mp4
+    - delay:
+        seconds: 12
+    - service: telegram_bot.send_video
+      data_template:
+        file: "/tmp/shot1.mp4" 
+        

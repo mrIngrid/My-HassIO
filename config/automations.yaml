@@ -1,0 +1,71 @@
+
+#- alias: dafang_webhook_video_ready
+#  hide_entity: true
+#  initial_state: true
+#  trigger:
+#    platform: webhook
+#    webhook_id: 'webhook_video_ready'
+#  action:
+#    - service: notify.notifiche_telegram
+#      data:
+#        message: "Video pronto!\nhttps://xxxxxxxxxxx.duckdns.org/local/temp/output.mp4"
+#    - service: notify.notifiche_telegram
+#      data_template:
+#        message: 'Video'
+#        data:
+#          video:
+#            - url: "https://xxxxxxxxxx.duckdns.org/local/temp/output.mp4"
+#              timeout: 69
+#              caption: "{{ now().strftime('%H:%M:%S %d/%m/%Y') }}"
+#              message: 'Video'
+
+
+- id: shellies_announce
+  alias: Shellies Announce
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+    service: mqtt.publish
+    data:
+      topic: shellies/command
+      payload: announce
+- id: shellies_discovery
+  alias: Shellies Discovery
+  trigger:
+  - platform: mqtt
+    topic: shellies/announce
+  action:
+    service: python_script.shellies_discovery
+    data_template:
+      id: '{{ trigger.payload_json.id }}'
+      mac: '{{ trigger.payload_json.mac }}'
+      fw_ver: '{{ trigger.payload_json.fw_ver }}'
+      qos: 2
+      shelly1-326385-relay-0: light
+      shelly1-320204-relay-0: light
+      shelly1-32CACB-relay-0: light
+      shelly1-32D081-relay-0: light
+      shelly1-32B541-relay-0: light
+      
+- alias: Update MQTT sensors on startup
+  initial_state: 'on'
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: location/scan/restart
+
+- alias: Power state on HA start-up
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: tasmotas/cmnd/state
+      payload: ''
+
+

@@ -1,0 +1,18 @@
+##### XIAOMI PHILIPS ZHIRUI ######       
+  - platform: xiaomi_miio
+    name: Faretto Cucina 1
+    host: 192.168.1.130
+    token: aaccc29db3e8989d76466054895b3120
+    model: philips.light.downlight              
+        
+  - platform: xiaomi_miio
+    name: Faretto Cucina 2
+    host: 192.168.1.131
+    token: 087630f57dfe254e0c1b6be8db6bcbe3
+    model: philips.light.downlight       
+    
+  - platform: xiaomi_miio
+    name: Faretto Cucina 3
+    host: 192.168.1.132
+    token: 52cddbc294d858cf8fd558eb1569bb92
+    model: philips.light.downlight  

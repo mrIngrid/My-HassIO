@@ -1,0 +1,19 @@
+  impostazioni_controllo_dafang:
+    name: Impostazioni
+    icon: mdi:settings
+    initial: 'off'
+    
+  impostazioni_globali_allarme:  
+    name: Impostazioni
+    icon: mdi:settings
+    initial: 'off'
+    
+  impostazioni_globali_allarme_2:  
+    name: Impostazioni
+    icon: mdi:settings
+    initial: 'off'    
+    
+  statistiche_shellyem_pow:
+    name: Statistiche ShellyEM & Pow
+    icon: mdi:settings
+    initial: 'off'

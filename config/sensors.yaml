@@ -1,0 +1,140 @@
+
+  - platform: dnsip
+  
+############## DAIKIN STYLISH ##############  
+  - platform: rest
+    resource: http://192.168.1.118/aircon/get_day_power_ex
+    name: "Consumo Daikin Caldo"
+    value_template: "{{ value.split(',')[1].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power
+    
+  - platform: rest
+    resource: http://192.168.1.118/aircon/get_day_power_ex
+    name: "Consumo Daikin Caldo Ieri"
+    value_template: "{{ value.split(',')[2].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power    
+    
+  - platform: rest
+    resource: http://192.168.1.118/aircon/get_day_power_ex
+    name: "Consumo Daikin Freddo"
+    value_template: "{{ value.split(',')[3].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power
+    
+  - platform: rest
+    resource: http://192.168.1.118/aircon/get_day_power_ex
+    name: "Consumo Daikin Freddo Ieri"
+    value_template: "{{ value.split(',')[4].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power    
+
+  - platform: rest
+    resource: http://192.168.1.118/aircon/get_sensor_info
+    name: "Umidita Daikin"
+    value_template: "{{ value.split(',')[2].split('=')[1] }}"
+    unit_of_measurement: "%"
+    device_class: humidity 
+    
+    
+############## DAIKIN SERIE M ##############  
+  - platform: rest
+    resource: http://192.168.1.187/aircon/get_day_power_ex
+    name: "Consumo Daikin M Caldo"
+    value_template: "{{ value.split(',')[1].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power
+    
+  - platform: rest
+    resource: http://192.168.1.187/aircon/get_day_power_ex
+    name: "Consumo Daikin M Caldo Ieri"
+    value_template: "{{ value.split(',')[2].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power    
+    
+  - platform: rest
+    resource: http://192.168.1.187/aircon/get_day_power_ex
+    name: "Consumo Daikin M Freddo"
+    value_template: "{{ value.split(',')[3].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power
+    
+  - platform: rest
+    resource: http://192.168.1.187/aircon/get_day_power_ex
+    name: "Consumo Daikin M Freddo Ieri"
+    value_template: "{{ value.split(',')[4].split('=')[1].split('/')|map('float')|sum/10 }}"
+    unit_of_measurement: "kWh"
+    device_class: power    
+      
+  - platform: mitemp_bt
+    mac: '4c:65:a8:d9:a7:d2'
+    name: Salotto
+    force_update: false
+    median: 3
+    monitored_conditions:
+       - temperature
+       - humidity
+       - battery
+     
+  - platform: template
+    sensors:
+      oneplus6_battery:
+        friendly_name: "OnePlus6 Battery"
+        value_template: "{{states.device_tracker.google_maps_116716013753767492736.attributes.battery_level}}"
+        unit_of_measurement: "%"     
+     
+  - platform: template
+    sensors:
+      iphone7_battery:
+        friendly_name: "iPhone7 Battery"
+        value_template: "{{states.device_tracker.google_maps_105790704769903066698.attributes.battery_level}}"
+        unit_of_measurement: "%"       
+     
+     
+  - platform: template
+    sensors:
+      presa_xiaomi:
+        friendly_name: "Consumo Presa Xiaomi"
+        unit_of_measurement: "W"
+        value_template: "{{ states.switch.plug_158d0001bc31cb.attributes.load_power }}"
+
+  - platform: random
+  - platform: time_date
+    display_options:
+       - 'time'
+       - 'date'
+       - 'date_time'
+       - 'time_date'
+       - 'time_utc'
+       - 'beat'     
+
+########################################################################
+###  Clock Time
+########################################################################
+  - platform: template
+    sensors:
+      data_ora:
+        friendly_name: "Data e Ora"
+        entity_id: sensor.date_time, sensor.time, sensor.date
+        value_template: '{{now().strftime("%d/%m/%Y - %H:%M")}}'
+        icon_template: mdi:calendar-clock
+
+########################################################################
+###  Giorno della settimana
+########################################################################
+  - platform: template
+    sensors:
+      day_of_week:
+        friendly_name: 'Giorno della settimana'
+        entity_id: sensor.time      
+        value_template: '{% if now().weekday() in (0,) %} Lun {% elif now().weekday() in (1,) %} Mar  {% elif now().weekday() in (2,) %} Mer  {% elif now().weekday() in (3,) %} Gio {% elif now().weekday() in (4,) %} Ven {% elif now().weekday() in (5,) %} Sab {% elif now().weekday() in (6,) %} Dom{% endif %}'
+
+  - platform: template
+    sensors:
+      last_alexa:
+        entity_id:
+          - media_player.echo_dot_di_ingrid
+        value_template: >
+          {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+

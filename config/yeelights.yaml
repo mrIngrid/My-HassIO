@@ -1,0 +1,36 @@
+    devices:
+      192.168.1.149:
+        name: Led Salotto
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True
+      192.168.1.148:
+        name: Led TV
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True
+      192.168.1.139:
+        name: Led Corridoio
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True        
+      192.168.1.114:
+        name: Bedside Comodino
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True
+      192.168.1.158:
+        name: Yeelight Letto
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True 
+      192.168.1.134:
+        name: Yeelight Bimbi
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: True  
+      192.168.1.133:
+        name: Plafoniera Bagno
+        transition: 1000
+        save_on_change: False #(defaults to True)
+        use_music_mode: False
