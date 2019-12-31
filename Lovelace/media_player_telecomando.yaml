@@ -1,0 +1,238 @@
+cards:
+  - cards:
+      - artwork: cover
+        entity: media_player.android_tv
+        icon: 'mdi:spotify'
+        type: 'custom:mini-media-player'
+      - cards:
+          - entity: script.u5_power
+            icon: 'mdi:power'
+            name: Box
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_mute
+            icon: 'mdi:volume-mute'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_suspend
+            icon: 'mdi:power-sleep'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_power
+            icon: 'mdi:power-cycle'
+            name: Ampli
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_red
+            icon: 'mdi:radiobox-marked'
+            show_name: false
+            style: |
+              ha-card {
+              background: red       
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_green
+            icon: 'mdi:radiobox-marked'
+            show_name: false
+            style: |
+              ha-card {
+              background: green 
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_yellow
+            icon: 'mdi:radiobox-marked'
+            show_name: false
+            style: |
+              ha-card {
+              background: yellow
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_blue
+            icon: 'mdi:radiobox-marked'
+            show_name: false
+            style: |
+              ha-card {
+              background: blue
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_home
+            icon: 'mdi:home-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_up
+            icon: 'mdi:arrow-up-bold-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_live_tv
+            icon: 'mdi:television-box'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_left
+            icon: 'mdi:arrow-left-bold-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_enter
+            icon: 'mdi:radiobox-marked'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_right
+            icon: 'mdi:arrow-right-bold-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_back
+            icon: 'mdi:backspace-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_down
+            icon: 'mdi:arrow-down-bold-outline'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_menu
+            icon: 'mdi:menu'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_volume_down
+            icon: 'mdi:volume-low'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_volume_up
+            icon: 'mdi:volume-high'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_down
+            icon: 'mdi:minus'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_up
+            icon: 'mdi:plus'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.u5_youtube
+            icon: 'mdi:youtube'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_google_play
+            icon: 'mdi:google-play'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_netflix
+            icon: 'mdi:netflix'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.u5_plex
+            icon: 'mdi:plex'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.ht_power
+            name: Home Theatre Power
+            show_icon: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.ht_volume_down
+            icon: 'mdi:volume-low'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_volume_up
+            icon: 'mdi:volume-high'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_listen_mode
+            icon: 'mdi:audio-video'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_pure_audio
+            icon: 'mdi:contactless-payment'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+      - cards:
+          - entity: script.ht_video_1
+            icon: 'mdi:volume-high'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_video_2
+            icon: 'mdi:audio-video'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+          - entity: script.ht_aux
+            icon: 'mdi:audio-video'
+            show_name: false
+            tap_action:
+              action: toggle
+            type: entity-button
+        type: horizontal-stack
+    type: vertical-stack
+type: vertical-stack
