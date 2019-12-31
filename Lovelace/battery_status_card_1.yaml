@@ -1,0 +1,44 @@
+entities:
+  - input_number.soglia_minima_batterie
+  - entities:
+      - sensor.bat_porta_blindata
+      - sensor.bat_serr_blindata
+      - sensor.bat_fin_salotto
+      - sensor.bat_fin_cucina
+      - sensor.bat_fin_letto
+      - sensor.bat_fin_bagno
+      - sensor.bat_fin_bimbi
+      - sensor.bat_fin_scala
+      - sensor.bat_pir_salotto
+      - sensor.bat_pir_bagno
+      - sensor.bat_pir_scala
+    head:
+      label: Batterie Sensori Finestre e Pir
+      type: section
+    type: 'custom:fold-entity-row'
+  - entities:
+      - sensor.bat_pulsante_ingresso
+      - sensor.bat_pulsante_bagno
+      - sensor.bat_pulsante_com1
+      - sensor.bat_pulsante_com2
+      - sensor.bat_pulsante_cucina
+      - sensor.bat_sens_acqua
+      - sensor.bat_cubo_aqara
+    head:
+      label: Batterie Sensori Pulsanti
+      type: section
+    type: 'custom:fold-entity-row'
+  - entities:
+      - entity: sensor.bat_temp_letto
+      - entity: sensor.bat_temp_bimbi
+      - entity: sensor.bat_temp_bagno
+      - entity: sensor.bat_temp_cucina
+      - entity: sensor.bat_temp_scala
+      - entity: sensor.bat_temp_salotto
+    head:
+      label: Batterie Sensori Temperatura
+      type: section
+    type: 'custom:fold-entity-row'
+show_header_toggle: false
+title: Controllo Batterie Xiaomi
+type: entities
