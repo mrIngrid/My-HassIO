@@ -1,0 +1,230 @@
+entities:
+  - cards:
+      - color_type: blank-card
+        type: 'custom:button-card'
+        styles:
+          card:
+            - width: 25px
+      - color_type: icon
+        entity: sensor.temperatura_smarther
+        show_state: true
+        show_units: false
+        icon: 'mdi:thermometer'
+        color: var(--paper-item-icon-color)
+        show_name: false
+        size: 35px
+        styles:
+          card:
+            - font-size: 15px
+            - height: 70px
+            - width: 70px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: sensor.umidita_smarther
+        show_state: true
+        icon: 'mdi:water-percent'
+        color: var(--paper-item-icon-color)
+        show_units: false
+        show_name: false
+        size: 35px
+        styles:
+          card:
+            - font-size: 15px
+            - height: 70px
+            - width: 70px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: binary_sensor.door_window_sensor_158d000203052a
+        icon: 'mdi:door'
+        color: var(--paper-item-icon-color)
+        show_name: false
+        styles:
+          card:
+            - height: 70px
+            - width: 70px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        state:
+          - styles:
+              card:
+                - box-shadow: 0px 0px 10px 7px var(--paper-item-icon-active-color) inset
+              icon:
+                - color: var(--paper-item-icon-active-color)
+            value: 'on'
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: binary_sensor.door_window_sensor_158d0001e64513
+        icon: 'mdi:key-variant'
+        color: var(--paper-item-icon-color)
+        show_name: false
+        styles:
+          card:
+            - height: 70px
+            - width: 70px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        state:
+          - styles:
+              card:
+                - box-shadow: 0px 0px 10px 7px var(--paper-item-icon-active-color) inset
+              icon:
+                - color: var(--paper-item-icon-active-color)
+            value: 'on'
+        type: 'custom:button-card'
+    type: 'custom:hui-horizontal-stack-card'
+  - cards:
+      - color_type: blank-card
+        type: 'custom:button-card'
+        styles:
+          card:
+            - width: 55px
+      - color_type: icon
+        show_state: true
+        show_units: false
+        show_icon: false
+        color: var(-–primary-background-color)
+        name: "\U0001F6AA Ingresso"
+        styles:
+          card:
+            - font-size: 30px
+            - height: 70px
+            - width: 250px
+        type: 'custom:button-card'
+    type: 'custom:hui-horizontal-stack-card'
+  - cards:
+      - color_type: icon
+        entity: light.gateway_light_7811dce17669
+        icon: 'mdi:white-balance-sunny'
+        color: var(-–primary-background-color)
+        name: Gateway
+        size: 40px
+        hold_action:
+          action: more-info
+        state:
+          - styles:
+              card:
+                - '--rgb': |
+                    [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+                - box-shadow: >
+                    0px 0px 10px 9px var(--rgb) inset, 4px 4px 12px 0
+                    rgba(0,0,0,.7)
+            value: 'on'
+        styles:
+          card:
+            - font-size: 12px
+            - height: 80px
+            - width: 80px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+          icon:
+            - '--rgb': |
+                [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+            - '--bri': |
+                [[[ return 'entity.attributes.brightness' ]]]
+            - color: var(--rgb)
+        type: 'custom:button-card'
+      - color_type: blank-card
+        type: 'custom:button-card'
+        styles:
+          card:
+            - width: 3px
+      - color_type: icon
+        entity: light.shelly1_326385_relay_0
+        icon: 'mdi:wall-sconce-flat'
+        name: Faretti
+        size: 40px
+        state:
+          - styles:
+              card:
+                - box-shadow: 0px 0px 10px 7px var(--paper-item-icon-active-color) inset
+              icon:
+                - color: var(--paper-item-icon-active-color) inset
+            value: 'on'
+        styles:
+          card:
+            - font-size: 15px
+            - height: 80px
+            - width: 80px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: blank-card
+        type: 'custom:button-card'
+        styles:
+          card:
+            - width: 3px
+      - color_type: icon
+        entity: light.led_corridoio
+        icon: 'mdi:led-strip-variant'
+        color: var(-–primary-background-color)
+        name: Led Soffitto
+        size: 40px
+        hold_action:
+          action: more-info
+        state:
+          - styles:
+              card:
+                - '--rgb': |
+                    [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+                - box-shadow: >
+                    0px 0px 10px 9px var(--rgb) inset, 4px 4px 12px 0
+                    rgba(0,0,0,.7)
+            value: 'on'
+        styles:
+          card:
+            - font-size: 12px
+            - height: 80px
+            - width: 80px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+          icon:
+            - '--rgb': |
+                [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+            - '--bri': |
+                [[[ return 'entity.attributes.brightness' ]]]
+            - color: var(--rgb)
+        type: 'custom:button-card'
+      - color_type: blank-card
+        type: 'custom:button-card'
+        styles:
+          card:
+            - width: 3px
+      - color_type: icon
+        entity: light.sonoff_foto
+        icon: 'mdi:spotlight-beam'
+        color: var(-–primary-background-color)
+        name: Foto
+        size: 40px
+        state:
+          - styles:
+              card:
+                - box-shadow: 0px 0px 10px 7px var(--paper-item-icon-active-color) inset
+              icon:
+                - color: var(--paper-item-icon-active-color)
+            value: 'on'
+        styles:
+          card:
+            - font-size: 15px
+            - height: 80px
+            - width: 80px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+    type: 'custom:hui-horizontal-stack-card'
+  - group_config:
+      toggle: false
+      type: 'custom:slider-entity-row'
+    head:
+      label: Light Settings
+      type: section
+    items:
+      - light.gateway_light_7811dce17669
+      - light.led_corridoio
+    padding: 0
+    type: 'custom:fold-entity-row'
+show_header_toggle: false
+style: |
+  ha-card {
+    border: solid 2px var(--primary-color);
+  }
+type: entities
