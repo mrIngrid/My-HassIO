@@ -2,9 +2,7 @@ entities:
   - cards:
       - color_type: blank-card
         type: 'custom:button-card'
-        styles:
-          card:
-            - width: 25px
+        aspect_ratio: 1/1
       - color_type: icon
         entity: sensor.salotto_temperature
         show_state: true
@@ -12,12 +10,10 @@ entities:
         icon: 'mdi:thermometer'
         color: var(--paper-item-icon-color)
         show_name: false
-        size: 35px
+        aspect_ratio: 1/1
         styles:
           card:
             - font-size: 15px
-            - height: 70px
-            - width: 70px
             - border-radius: 50%
             - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
         type: 'custom:button-card'
@@ -28,12 +24,10 @@ entities:
         color: var(--paper-item-icon-color)
         show_units: false
         show_name: false
-        size: 35px
+        aspect_ratio: 1/1
         styles:
           card:
             - font-size: 15px
-            - height: 70px
-            - width: 70px
             - border-radius: 50%
             - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
         type: 'custom:button-card'
@@ -42,10 +36,9 @@ entities:
         icon: 'mdi:motion-sensor'
         color: var(--paper-item-icon-color)
         show_name: false
+        aspect_ratio: 1/1
         styles:
           card:
-            - height: 70px
-            - width: 70px
             - border-radius: 50%
             - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
         state:
@@ -61,10 +54,9 @@ entities:
         icon: 'mdi:window-closed-variant'
         color: var(--paper-item-icon-color)
         show_name: false
+        aspect_ratio: 1/1
         styles:
           card:
-            - height: 70px
-            - width: 70px
             - border-radius: 50%
             - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
         state:
@@ -75,13 +67,11 @@ entities:
                 - color: var(--paper-item-icon-active-color)
             value: 'on'
         type: 'custom:button-card'
-    type: 'custom:hui-horizontal-stack-card'
-  - cards:
       - color_type: blank-card
         type: 'custom:button-card'
-        styles:
-          card:
-            - width: 55px
+        aspect_ratio: 1/1
+    type: 'custom:hui-horizontal-stack-card'
+  - cards:
       - color_type: icon
         show_state: true
         show_units: false
@@ -91,16 +81,14 @@ entities:
         styles:
           card:
             - font-size: 30px
-            - height: 70px
-            - width: 250px
         type: 'custom:button-card'
     type: 'custom:hui-horizontal-stack-card'
   - cards:
       - color_type: icon
         entity: light.shelly1_32cacb_relay_0
         icon: 'mdi:ceiling-light'
-        color: white
-        name: Lampadario
+        name: Lampada
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -112,19 +100,13 @@ entities:
         styles:
           card:
             - font-size: 12px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: light.shelly1_32d081_relay_0
         icon: 'mdi:wall-sconce-flat'
         name: Faretti
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -136,20 +118,14 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: light.led_salotto
         icon: 'mdi:led-strip-variant'
         color: var(-–primary-background-color)
         name: Led Soffitto
+        aspect_ratio: 1/1
         size: 40px
         hold_action:
           action: more-info
@@ -164,9 +140,7 @@ entities:
             value: 'on'
         styles:
           card:
-            - font-size: 12px
-            - height: 80px
-            - width: 80px
+            - font-size: 11px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
           icon:
             - '--rgb': |
@@ -175,16 +149,12 @@ entities:
                 [[[ return 'entity.attributes.brightness' ]]]
             - color: var(--rgb)
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: light.sonoff_minibar
         icon: 'mdi:spotlight-beam'
         color: var(-–primary-background-color)
         name: Presa
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -196,8 +166,6 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
     type: 'custom:hui-horizontal-stack-card'
@@ -207,6 +175,7 @@ entities:
         icon: 'mdi:spotlight-beam'
         color: var(-–primary-background-color)
         name: Minibar
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -218,19 +187,13 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: switch.oittm_aroma
         icon: 'mdi:air-filter'
         name: Aromi
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -242,19 +205,13 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: light.led_tv
         icon: 'mdi:led-strip'
         name: Led TV
+        aspect_ratio: 1/1
         size: 40px
         hold_action:
           action: more-info
@@ -270,8 +227,6 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
           icon:
             - '--rgb': |
@@ -280,16 +235,12 @@ entities:
                 [[[ return 'entity.attributes.brightness' ]]]
             - color: var(--rgb)
         type: 'custom:button-card'
-      - color_type: blank-card
-        type: 'custom:button-card'
-        styles:
-          card:
-            - width: 3px
       - color_type: icon
         entity: light.sonoff_minibar
         icon: 'mdi:spotlight-beam'
         color: var(-–primary-background-color)
         name: Presa 2
+        aspect_ratio: 1/1
         size: 40px
         state:
           - styles:
@@ -301,8 +252,6 @@ entities:
         styles:
           card:
             - font-size: 15px
-            - height: 80px
-            - width: 80px
             - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
         type: 'custom:button-card'
     type: 'custom:hui-horizontal-stack-card'
@@ -320,6 +269,6 @@ entities:
 show_header_toggle: false
 style: |
   ha-card {
-    border: solid 2px var(--primary-color);
+    border: solid 2px deepskyblue;
   }
 type: entities
