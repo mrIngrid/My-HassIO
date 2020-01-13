@@ -1,0 +1,167 @@
+entities:
+  - cards:
+      - color_type: blank-card
+        type: 'custom:button-card'
+        aspect_ratio: 1/1
+      - color_type: icon
+        entity: sensor.temperature_158d000272fe6a
+        show_state: true
+        show_units: false
+        icon: 'mdi:thermometer'
+        color: var(--paper-item-icon-color)
+        show_name: false
+        aspect_ratio: 1/1
+        size: 35px
+        styles:
+          card:
+            - font-size: 15px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: sensor.humidity_158d000272fe6a
+        show_state: true
+        icon: 'mdi:water-percent'
+        color: var(--paper-item-icon-color)
+        show_units: false
+        show_name: false
+        aspect_ratio: 1/1
+        size: 35px
+        styles:
+          card:
+            - font-size: 15px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: sensor.pressure_158d000272fe6a
+        show_state: true
+        icon: 'mdi:gauge'
+        color: var(--paper-item-icon-color)
+        show_units: false
+        show_name: false
+        aspect_ratio: 1/1
+        size: 35px
+        styles:
+          card:
+            - font-size: 12px
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: binary_sensor.door_window_sensor_158d0002254081
+        icon: 'mdi:window-closed-variant'
+        color: var(--paper-item-icon-color)
+        show_name: false
+        aspect_ratio: 1/1
+        styles:
+          card:
+            - border-radius: 50%
+            - box-shadow: 0px 0px 3px 1px var(--primary-color) inset
+        state:
+          - styles:
+              card:
+                - box-shadow: 0px 0px 10px 7px var(--paper-item-icon-active-color) inset
+              icon:
+                - color: var(--paper-item-icon-active-color)
+            value: 'on'
+        type: 'custom:button-card'
+      - color_type: blank-card
+        type: 'custom:button-card'
+        aspect_ratio: 2/1
+    type: 'custom:hui-horizontal-stack-card'
+  - cards:
+      - color_type: icon
+        show_state: true
+        show_units: false
+        show_icon: false
+        color: var(-–primary-background-color)
+        name: "\U0001F6CF️Camera bimbi"
+        styles:
+          card:
+            - font-size: 30px
+        type: 'custom:button-card'
+    type: 'custom:hui-horizontal-stack-card'
+  - cards:
+      - color_type: blank-card
+        type: 'custom:button-card'
+        aspect_ratio: 1/1
+      - color_type: icon
+        entity: light.yeelight_bimbi
+        icon: 'mdi:ceiling-light'
+        color: var(-–primary-background-color)
+        name: Yeelight
+        aspect_ratio: 1/1
+        size: 40px
+        hold_action:
+          action: more-info
+        state:
+          - styles:
+              card:
+                - '--rgb': |
+                    [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+                - box-shadow: >
+                    0px 0px 10px 9px var(--rgb) inset, 4px 4px 12px 0
+                    rgba(0,0,0,.7)
+            value: 'on'
+        styles:
+          card:
+            - font-size: 12px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+          icon:
+            - '--rgb': |
+                [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+            - '--bri': |
+                [[[ return 'entity.attributes.brightness' ]]]
+            - color: var(--rgb)
+        type: 'custom:button-card'
+      - color_type: icon
+        entity: light.bedside_comodino
+        icon: 'mdi:lamp'
+        color: var(-–primary-background-color)
+        name: Bedside
+        aspect_ratio: 1/1
+        size: 40px
+        hold_action:
+          action: more-info
+        state:
+          - styles:
+              card:
+                - '--rgb': |
+                    [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+                - box-shadow: >
+                    0px 0px 10px 9px var(--rgb) inset, 4px 4px 12px 0
+                    rgba(0,0,0,.7)
+            value: 'on'
+        styles:
+          card:
+            - font-size: 12px
+            - box-shadow: 0px 0px 5px 1px var(--primary-color) inset
+          icon:
+            - '--rgb': |
+                [[[ return 'rgb(' + entity.attributes.rgb_color + ')' ]]]
+            - '--bri': |
+                [[[ return 'entity.attributes.brightness' ]]]
+            - color: var(--rgb)
+        type: 'custom:button-card'
+      - color_type: blank-card
+        type: 'custom:button-card'
+        aspect_ratio: 1/1
+    type: 'custom:hui-horizontal-stack-card'
+  - group_config:
+      toggle: false
+      type: 'custom:slider-entity-row'
+    head:
+      label: Light Settings
+      type: section
+    items:
+      - light.yeelight_bimbi
+      - light.bedside_comodino
+    padding: 0
+    type: 'custom:fold-entity-row'
+show_header_toggle: false
+style: |
+  ha-card {
+    border: solid 2px deepskyblue;
+  }
+type: entities
