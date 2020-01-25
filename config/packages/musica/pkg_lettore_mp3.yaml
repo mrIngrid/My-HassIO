@@ -1,0 +1,405 @@
+homeassistant:
+  customize:
+    automation.play_musica:
+      icon: mdi:volume-high
+    automation.stop_musica:
+      icon: mdi:volume-off
+    automation.cambia_musica:
+      icon: mdi:skip-next
+
+input_text:
+  domain:
+    name: Dominio Completo
+    icon: mdi:internet-explorer
+    mode: text #put 'password' to hide
+    
+input_select:
+  music:
+    name: Lista Canzoni
+    icon: mdi:music-note
+    options: 
+      !include /config/packages/musica/lista.yml
+
+#in fase di test      
+  playlist:
+    name: Lista Playlist
+    icon: mdi:music-note
+    options: 
+    - lista.yml
+    - playlist_1.yml
+    - playlist_2.yml
+      
+  sorgente:
+    name: Sorgente Musica
+    icon: mdi:cast-audio
+    options: 
+    - 'Google Home' #frienly_name
+    - 'Google Home Mini'
+    
+input_boolean:
+  musica_mp3:
+    name: Musica Mp3
+    icon: mdi:music
+    
+input_number:    
+  google_home:
+    name: GH Volume
+    initial: 40
+    min: 0
+    max: 100
+    step: 1
+    
+  google_home_mini:
+    name: GH Mini Volume
+    initial: 40
+    min: 0
+    max: 100
+    step: 1    
+    
+    
+automation:
+
+- alias: Set Goggle Home Slider Position
+  trigger:
+    - platform: state
+      entity_id: media_player.google_home
+  condition:
+    - condition: template
+      value_template: "{{ not is_state_attr('media_player.google_home', 'volume_level', states('input_number.google_home') | int / 100) }}"
+  action:
+    - service: input_number.set_value
+      entity_id: input_number.google_home
+      data_template:
+        value: "{{ trigger.to_state.attributes.volume_level | multiply(100) | int }}"
+
+- alias: Set Goggle Home Volume
+  trigger:
+    - platform: state
+      entity_id: input_number.google_home
+  condition:
+    - condition: template
+      value_template: "{{ not is_state_attr('media_player.google_home', 'volume_level', states('input_number.google_home') | int / 100) }}"
+  action:
+    - service: media_player.volume_set
+      entity_id: media_player.google_home
+      data_template:
+        volume_level: "{{ states('input_number.google_home') | int / 100 }}"
+
+- alias: Set Google Home Mini Slider Position
+  trigger:
+    - platform: state
+      entity_id: media_player.google_home_mini
+  condition:
+    - condition: template
+      value_template: "{{ not is_state_attr('media_player.google_home_mini', 'volume_level', states('input_number.google_home_mini') | int / 100) }}"
+  action:
+    - service: input_number.set_value
+      entity_id: input_number.google_home_mini
+      data_template:
+        value: "{{ trigger.to_state.attributes.volume_level | multiply(100) | int }}"
+
+- alias: Set Google Home Mini Volume
+  trigger:
+    - platform: state
+      entity_id: input_number.google_home_mini
+  condition:
+    - condition: template
+      value_template: "{{ not is_state_attr('media_player.google_home_mini', 'volume_level', states('input_number.google_home_mini') | int / 100) }}"
+  action:
+    - service: media_player.volume_set
+      entity_id: media_player.google_home_mini
+      data_template:
+        volume_level: "{{ states('input_number.google_home_mini') | int / 100 }}"
+
+#- alias: ATTIVA Riproduci Playlist
+#  trigger:
+#    platform: template
+#    value_template: >-
+#      {%- set template_result = false -%}
+#      {%- for device in expand(states['media_player'])  if (device.name | lower == states.input_select.sorgente.state | lower or device.entity_id | lower == states.input_select.sorgente.state | lower) and device.state == 'playing' -%}
+#      {%- set template_result = true -%}
+#      {%- endfor -%}
+#      {{ template_result }}
+#  action:
+#  - service: automation.turn_on
+#    entity_id: automation.riproduci_playlist
+
+- alias: Riproduci Playlist
+  trigger:
+#    platform: template
+#    value_template: >-
+#      {% set list = expand('input_select.sorgente')|map(attribute='attributes.options')|join(',') %}
+#      {{states.media_player | selectattr('name', 'in', list)
+#      |selectattr('state','in',['off','idle'])|list|count>0}}
+  - platform: state
+    entity_id: media_player.google_home
+    to: 'off'
+    for:
+      seconds: '2'
+  - platform: state
+    entity_id: media_player.google_home
+    to: 'idle'
+    for:
+      seconds: '2'
+      
+  - platform: state
+    entity_id: media_player.google_home_mini
+    to: 'off'
+    for:
+      seconds: '2'
+  - platform: state
+    entity_id: media_player.google_home_mini
+    to: 'idle'
+    for:
+      seconds: '2'
+      
+  condition:
+    - condition: state
+      entity_id: input_boolean.musica_mp3
+      state: 'on'
+  action:
+  - service: input_select.select_option
+    entity_id: input_select.music
+    data_template:
+      option: >
+        {% set options = state_attr('input_select.music','options') -%}
+        {% set selection = options.index(states('input_select.music')) -%}
+        {% if (selection + 1) >= options | length -%}
+        {{ options[0] }}
+        {% else %}
+        {{ options[selection + 1] }}
+        {% endif %}
+  - service: media_player.play_media 
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+      media_content_id: "{{states('input_text.domain')}}/local/audio/{{states('input_select.music')}}"
+      media_content_type: 'audio/mp3'
+
+
+- alias: Play Pause Musica
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'brightness_up_click'
+  action:
+  - service: media_player.media_play_pause
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+        
+- alias: Play Musica
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'brightness_up_click'
+  action:
+  - service: media_player.play_media 
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+        
+      media_content_id: "{{states('input_text.domain')}}/local/audio/{{states('input_select.music')}}"
+      media_content_type: 'audio/mp3'
+#  - service: automation.turn_on
+#    entity_id: automation.riproduci_playlist
+      
+- alias: Stop Musica
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'brightness_up_hold'
+  action:
+  - service: media_player.media_stop
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+#  - service: automation.turn_off
+#    entity_id: automation.riproduci_playlist
+      
+- alias: Cambia Musica avanti
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'arrow_left_click'
+  action:
+  - service: input_select.select_option
+    entity_id: input_select.music
+    data_template:
+      option: >
+        {% set options = state_attr('input_select.music','options') -%}
+        {% set selection = options.index(states('input_select.music')) -%}
+        {% if (selection + 1) >= options | length -%}
+        {{ options[0] }}
+        {% else %}
+        {{ options[selection + 1] }}
+        {% endif %}
+#  - delay:
+#      seconds: '1'
+  - service: media_player.play_media 
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+      media_content_id: "{{states('input_text.domain')}}/local/audio/{{states('input_select.music')}}"
+      media_content_type: 'audio/mp3'
+        
+- alias: Cambia Musica indietro
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'arrow_right_click'
+  action:
+  - service: input_select.select_option
+    entity_id: input_select.music
+    data_template:
+      option: >
+        {% set options = state_attr('input_select.music','options') -%}
+        {% set selection = options.index(states('input_select.music')) -%}
+        {% if (selection - 1) >= options | length -%}
+        {{ options[0] }}
+        {% else %}
+        {{ options[selection - 1] }}
+        {% endif %}
+#  - delay:
+#      seconds: '1'
+  - service: media_player.play_media 
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+      media_content_id: "{{states('input_text.domain')}}/local/audio/{{states('input_select.music')}}"
+      media_content_type: 'audio/mp3'
+
+- alias: Toggle On Musica MP3
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'toggle'
+  condition:
+  - condition: state
+    entity_id: input_boolean.musica_mp3
+    state: 'off'
+  action:
+  - service: tts.google_translate_say
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+      message: Accendo Lettore mp3
+  - service: automation.turn_on
+    entity_id:
+    - automation.play_musica
+  - delay:
+      seconds: '5'
+  - service: automation.trigger
+    entity_id: automation.play_musica
+  - service: homeassistant.turn_on
+    entity_id:
+    - input_boolean.musica_mp3
+    - automation.riproduci_playlist
+    - automation.stop_musica
+    - automation.cambia_musica_avanti
+    - automation.cambia_musica_indietro
+    
+    
+      
+- alias: Toggle Off Musica MP3
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.0xccccccfffe4886c5_action
+    to: 'toggle'
+  condition:
+  - condition: state
+    entity_id: input_boolean.musica_mp3
+    state: 'on'
+  action:
+  - service: automation.trigger
+    entity_id: automation.stop_musica
+  - service: automation.turn_off
+    entity_id: automation.riproduci_playlist
+  - delay:
+      seconds: '1'
+  - service: tts.google_translate_say
+    data_template:
+      entity_id: >-
+        {% for device in states -%}
+        {%- if device.name|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- elif device.entity_id|lower == states.input_select.sorgente.state|lower -%}
+        {{ device.entity_id }}
+        {%- endif -%}
+        {%- endfor -%}
+      message: Spengo Lettore mp3
+  - service: homeassistant.turn_off
+    entity_id:
+    - input_boolean.musica_mp3
+    - automation.play_musica
+    - automation.stop_musica
+    - automation.cambia_musica_avanti
+    - automation.cambia_musica_indietro
+    
+    
+
+#switch:
+#  platform: template
+#  switches:
+#    musica_mp3:
+#     value_template: "{{ is_state('automation.riproduci_playlist', 'on') }}"
+#     friendly_name: 'Musica MP3'
+#     turn_on:
+#       - service: automation.turn_on
+#         entity_id: 
+#         - automation.riproduci_playlist
+#     turn_off:
+#       - service: automation.turn_off
+#         entity_id: 
+#         - automation.riproduci_playlist
+#     icon_template: >-
+#          {% if is_state('automation.play_musica', 'on') %}
+#            mdi:music
+#          {% else %}
+#            mdi:music-off
+#          {% endif %}
+#        
