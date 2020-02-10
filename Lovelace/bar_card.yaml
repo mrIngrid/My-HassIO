@@ -1,0 +1,38 @@
+cards:
+  - entities:
+      - bar_style:
+          border-radius: 20px
+        columns: 1
+        entities:
+          - entity: sensor.humidity_158d00022c75fa
+          - entity: sensor.humidity_158d000272fe6a
+          - entity: sensor.humidity_158d00023d4fca
+          - entity: sensor.salotto_humidity
+          - entity: sensor.humidity_158d0002b5c9bf
+          - entity: sensor.humidity_158d0002741c97
+          - entity: sensor.umidita_smarther
+        height: 15px
+        indicator_style:
+          border-radius: 20px
+        padding: 0px 15px 3px 15px
+        rounding: 10px
+        saturation: 50%
+        severity:
+        - color: '#fa0505'
+          value: 10
+        - color: '#fa6b05'
+          value: 35
+        - color: '#fab905'
+          value: 50
+        - color: '#ddfa05'
+          value: 75
+        - color: '#40bf40'
+          value: 100
+        title_position: left
+        type: 'custom:bar-card'
+        unit_of_measurement: '%'
+        width: 60%
+    type: entities
+show_header_toggle: false
+title: Batterie
+type: vertical-stack
