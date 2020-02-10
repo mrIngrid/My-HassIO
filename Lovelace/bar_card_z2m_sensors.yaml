@@ -1,0 +1,41 @@
+cards:
+  - card:
+      attribute: battery
+      bar_style:
+        border-radius: 20px
+      card_style:
+        box-shadow: 0 0
+      columns: 1
+      height: 15px
+      indicator_style:
+        border-radius: 20px
+      padding: 0px 15px 3px 15px
+      saturation: 50%
+      severity:
+        - color: '#fa0505'
+          value: 10
+        - color: '#fa6b05'
+          value: 35
+        - color: '#fab905'
+          value: 50
+        - color: '#ddfa05'
+          value: 75
+        - color: '#40bf40'
+          value: 100
+      title_position: left
+      type: 'custom:bar-card'
+      unit_of_measurement: '%'
+      width: 60%
+    filter:
+      exclude:
+        - entity_id: sensor.*_humidity
+        - entity_id: sensor.*_pressure
+        - entity_id: sensor.*_illumination
+        - entity_id: sensor.*_temperature
+        - entity_id: switch.plug_*
+      include:
+        - attributes:
+            battery: <=100
+    type: 'custom:auto-entities'
+title: Battery Status
+type: 'custom:vertical-stack-in-card'
