@@ -1,0 +1,152 @@
+automation:
+
+################################################
+#                                              #
+#                 LED TV                       #
+#                                              #
+################################################
+
+################ Toggle ON/OFF #################
+- alias: Tint Toggle ON OFF Led TV
+  description: ''
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'scene_3'
+  action:
+    data:
+      entity_id: light.led_tv
+    service: light.toggle
+
+############### Brightness up button ############
+- alias: Tint Led TV Dim UP
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'brightness_up_click'
+  condition:
+  - condition: state
+    entity_id: light.led_tv
+    state: 'on'
+  action:
+    service: light.turn_on
+    data_template:
+      entity_id: light.led_tv
+      brightness: '{{states.light.led_tv.attributes.brightness + 20}}'
+    
+############### Brightness down button ###########
+- alias: Tint Led Tv Dim DOWN
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'brightness_down_click'
+  condition:
+  - condition: state
+    entity_id: light.led_tv
+    state: 'on'
+  action:
+    service: light.turn_on
+    data_template:
+      entity_id: light.led_tv
+      brightness: '{{states.light.led_tv.attributes.brightness - 20}}'
+
+############ Random Color button ##############
+- alias: Tint Colori Led TV
+  trigger:
+  - platform: mqtt
+    topic: "zigbee2mqtt/0x00158d00038eccbc"
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: light.led_tv
+      state: 'on'
+    - condition: template
+      value_template: "{{ (trigger.payload_json.action_color_temperature | int) == 370 }}"
+  action:
+  - service: light.turn_on
+    entity_id:
+    - light.led_tv
+    data_template:
+      brightness_pct: 50
+      color_name: >
+        {% set colors = ['red', 'yellow', 'purple', 'green', 'blue', 'turquoise', 'fuchsia'] %}
+        {{ colors|random }}
+
+
+
+################################################
+#                                              #
+#                 LED SALOTTO                  #
+#                                              #
+################################################
+
+############ Toggle ON/OFF ##############
+- alias: Tint Toggle ON OFF Led Salotto
+  description: ''
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'scene_1'
+  action:
+    data:
+      entity_id: light.led_salotto
+    service: light.toggle
+
+############ Brightness up button ##############
+- alias: Tint Led Salotto Dim UP
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'brightness_up_click'
+  condition:
+  - condition: state
+    entity_id: light.led_salotto
+    state: 'on'
+  action:
+    service: light.turn_on
+    data_template:
+      entity_id: light.led_salotto
+      brightness: '{{states.light.led_salotto.attributes.brightness + 20}}'
+    
+############ Brightness down button ##############
+- alias: Tint Led Salotto Dim DOWN
+  trigger:
+    entity_id: sensor.0x00158d00038eccbc_action
+    platform: state
+    to: 'brightness_down_click'
+  condition:
+  - condition: state
+    entity_id: light.led_salotto
+    state: 'on'
+  action:
+    service: light.turn_on
+    data_template:
+      entity_id: light.led_salotto
+      brightness: '{{states.light.led_salotto.attributes.brightness - 20}}'
+
+############ Random Color button ##############
+- alias: Tint Colori Led Salotto
+  initial_state: 'on'
+  trigger:
+  - platform: mqtt
+    topic: "zigbee2mqtt/0x00158d00038eccbc"
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: light.led_salotto
+      state: 'on'
+    - condition: template
+      value_template: "{{ (trigger.payload_json.action_color_temperature | int) == 153 }}"
+  action:
+  - service: light.turn_on
+    entity_id:
+    - light.led_salotto
+    data_template:
+      brightness_pct: 50
+      color_name: >
+        {% set colors = ['red', 'yellow', 'purple', 'green', 'blue', 'turquoise', 'fuchsia'] %}
+        {{ colors|random }}
+
+###################################################################################################
