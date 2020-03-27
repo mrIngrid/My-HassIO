@@ -1,79 +1,7 @@
-cards:
-  - style:
-      background: red
-      height: 1px
-      margin-left: auto
-      margin-right: auto
-      width: 80%
-    type: divider
-  - entities:
-      - automation.riproduci_playlist
-      - automation.play_musica
-      - automation.stop_musica
-      - automation.cambia_musica_avanti
-      - automation.cambia_musica_indietro
-      - input_text.domain
-    head: input_boolean.musica_mp3
-    type: 'custom:fold-entity-row'
-  - style:
-      background: red
-      height: 1px
-      margin-left: auto
-      margin-right: auto
-      width: 80%
-    type: divider
-  - entities:
-      - input_select.sorgente
-      - input_select.music
-    type: entities
+entities:
+  - content: "<font size=5><center> \U0001F3B5 Gestione Musica Locale</font>\n"
+    type: 'custom:hui-markdown-card'
   - cards:
-      - entity: automation.play_pause_musica
-        icon: 'mdi:pause'
-        show_name: false
-        tap_action:
-          action: call-service
-          service: automation.trigger
-          service_data:
-            entity_id: automation.play_pause_musica
-        type: entity-button
-      - entity: automation.cambia_musica_indietro
-        icon: 'mdi:skip-backward'
-        show_name: false
-        tap_action:
-          action: call-service
-          service: automation.trigger
-          service_data:
-            entity_id: automation.cambia_musica_indietro
-        type: entity-button
-      - entity: automation.cambia_musica_avanti
-        icon: 'mdi:skip-forward'
-        show_name: false
-        tap_action:
-          action: call-service
-          service: automation.trigger
-          service_data:
-            entity_id: automation.cambia_musica_avanti
-        type: entity-button
-      - entity: automation.play_musica
-        icon: 'mdi:play'
-        show_name: false
-        tap_action:
-          action: call-service
-          service: automation.trigger
-          service_data:
-            entity_id: automation.play_musica
-        type: entity-button
-      - entity: automation.stop_musica
-        icon: 'mdi:stop'
-        show_name: false
-        tap_action:
-          action: call-service
-          service: automation.trigger
-          service_data:
-            entity_id: automation.stop_musica
-        type: entity-button
-    type: horizontal-stack
-  - entities:
       - style:
           background: red
           height: 1px
@@ -81,17 +9,22 @@ cards:
           margin-right: auto
           width: 80%
         type: divider
-      - input_number.google_home
-      - type: 'custom:mini-media-player'
-        entity: media_player.google_home
-        group: true
-        source: icon
-        info: short
-        icon: 'mdi:google-home'
-        hide:
-          controls: true
-          volume: true
-          power: true
+      - entities:
+          - automation.riproduci_playlist
+          - automation.play_musica
+          - automation.stop_musica
+          - automation.play_pause_musica
+          - automation.cambia_musica_avanti
+          - automation.cambia_musica_indietro
+          - automation.toggle_on_musica_mp3
+          - automation.toggle_off_musica_mp3
+          - automation.set_google_home_volume
+          - automation.set_google_home_slider_position
+          - automation.set_google_home_mini_volume
+          - automation.set_google_home_mini_slider_position
+          - input_text.domain
+        head: input_boolean.musica_mp3
+        type: 'custom:fold-entity-row'
       - style:
           background: red
           height: 1px
@@ -99,25 +32,120 @@ cards:
           margin-right: auto
           width: 80%
         type: divider
-      - input_number.google_home_mini
-      - type: 'custom:mini-media-player'
-        entity: media_player.google_home_mini
-        group: true
-        source: icon
-        info: short
-        icon: 'mdi:google-home'
-        hide:
-          controls: true
-          volume: true
-          power: true
-      - style:
-          background: red
-          height: 1px
-          margin-left: auto
-          margin-right: auto
-          width: 80%
-        type: divider
-    type: entities
-show_header_toggle: false
-title: Gestione Musica Locale
-type: 'custom:vertical-stack-in-card'
+      - entities:
+          - input_select.sorgente
+          - input_select.playlist
+          - input_select.music
+        type: entities
+      - cards:
+          - entity: automation.play_pause_musica
+            icon: 'mdi:pause'
+            show_name: false
+            tap_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.play_pause_musica
+            type: entity-button
+          - entity: automation.cambia_musica_indietro
+            icon: 'mdi:skip-backward'
+            show_name: false
+            tap_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.cambia_musica_indietro
+            type: entity-button
+          - entity: automation.cambia_musica_avanti
+            icon: 'mdi:skip-forward'
+            show_name: false
+            tap_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.cambia_musica_avanti
+            type: entity-button
+          - entity: automation.play_musica
+            icon: 'mdi:play'
+            show_name: false
+            tap_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.play_musica
+            type: entity-button
+          - entity: automation.stop_musica
+            icon: 'mdi:stop'
+            show_name: false
+            tap_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.stop_musica
+            type: entity-button
+        type: horizontal-stack
+      - entities:
+          - style:
+              background: red
+              height: 1px
+              margin-left: auto
+              margin-right: auto
+              width: 80%
+            type: divider
+          - input_number.google_home
+          - entity: media_player.google_home
+            group: true
+            hide:
+              controls: true
+              power: true
+              volume: true
+            icon: 'mdi:google-home'
+            info: short
+            source: icon
+            type: 'custom:mini-media-player'
+          - style:
+              background: red
+              height: 1px
+              margin-left: auto
+              margin-right: auto
+              width: 80%
+            type: divider
+          - input_number.google_home_mini
+          - entity: media_player.google_home_mini
+            group: true
+            hide:
+              controls: true
+              power: true
+              volume: true
+            icon: 'mdi:google-home'
+            info: short
+            source: icon
+            type: 'custom:mini-media-player'
+          - style:
+              background: red
+              height: 1px
+              margin-left: auto
+              margin-right: auto
+              width: 80%
+            type: divider
+          - input_number.google_home_gruppo
+          - entity: media_player.gruppo_casa_ingrid
+            group: true
+            hide:
+              controls: true
+              power: true
+              volume: true
+            icon: 'mdi:google-home'
+            info: short
+            source: icon
+            type: 'custom:mini-media-player'
+          - style:
+              background: red
+              height: 1px
+              margin-left: auto
+              margin-right: auto
+              width: 80%
+            type: divider
+        type: entities
+    type: 'custom:vertical-stack-in-card'
+type: entities
