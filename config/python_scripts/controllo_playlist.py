@@ -33,8 +33,8 @@ if __name__ == '__main__':
 
     ##############################################################
     #METTI QUI IL TUO ACCESS TOKEN A LUNGA VITA E IL TUO DOMINIO DI Home Assistant
-    Access_Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlYmVmZWNlMjBlZjY0NTRjODQ3YWE0NDliZDZlY2MwMiIsImlhdCI6MTU4NDY0MzQ5NSwiZXhwIjoxOTAwMDAzNDk1fQ.vsIkyykJi_XK2cFMOjN93yHBVgYZSjeLfinvc4DrFkw"
-    ip_ha = "ajdinihome.duckdns.org:8123"
+    Access_Token = "eyJ0eXAiOiJKV1QiLCJhbGcixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxjODQ3YWE0NDliZDZlY2MwMiIsImlhdCI6MxxxxxxxxxxxxTAwMDAzNDk1fQ.vsIkyykJi_XKxxxxxxxDrFkw"
+    ip_ha = "xxxxxxxx.duckdns.org:8123"
     entity_slider = "input_select.music"
     ##############################################################
 
