@@ -1,0 +1,182 @@
+aspect_ratio: auto
+elements:
+  - aspect_ratio: auto
+    entity: sensor.switch_min_boost
+    hold_action:
+      action: none
+    style:
+      auto-height: true
+      color: grey
+      font-family: Bahnschrift Condensed
+      font-size: 300%
+      left: 62%
+      opacity: 0.8
+      text-align: left
+      top: 50%
+    tap_action:
+      action: none
+    type: state-label
+  - entity: sensor.termo_btc_name
+    hold_action:
+      action: none
+    style:
+      auto-height: true
+      color: grey
+      font-family: Bahnschrift Condensed
+      font-size: 250%
+      left: 15%
+      opacity: 0.8
+      text-align: left
+      top: 13%
+    tap_action:
+      action: none
+    type: state-label
+  - entity: sensor.switch_grad_perc
+    hold_action:
+      action: none
+    style:
+      color: grey
+      font-family: Bahnschrift Condensed
+      font-size: 505%
+      left: 52%
+      opacity: 0.8
+      text-align: left
+      top: 40%
+    tap_action:
+      service: script.turn_on
+      service_data:
+        entity_id: script.incrementa_switch_visual
+    type: state-label
+  - entity: sensor.switch_visual_int
+    hold_action: none
+    style:
+      color: grey
+      font-family: Bahnschrift Condensed
+      font-size: 1000%
+      left: 35%
+      opacity: 0.8
+      text-align: right
+      top: 50%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.incrementa_switch_visual
+    type: state-label
+  - entity: sensor.switch_visual_dec
+    hold_action: none
+    style:
+      color: grey
+      font-family: Bahnschrift Condensed
+      font-size: 500%
+      left: 55%
+      opacity: 0.5
+      top: 57%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.incrementa_switch_visual
+    type: state-label
+  - entity: input_number.temperatura_termostato
+    hold_action: none
+    icon: 'mdi:chevron-up'
+    style:
+      bottom: 65%
+      color: red
+      right: 3%
+      top: 15%
+      zoom: 150%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.aumenta_temperatura
+    type: icon
+  - entity: input_number.temperatura_termostato
+    hold_actio: none
+    icon: 'mdi:chevron-down'
+    style:
+      bottom: 0%
+      color: blue
+      right: 3%
+      zoom: 150%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.diminuisci_temperatura
+    type: icon
+  - entity: binary_sensor.termostato_sala_spento
+    hold_action:
+      action: none
+    style:
+      bottom: '-6%'
+      left: 15%
+      opacity: 0.7
+      width: 10%
+      zoom: 150%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.termo_btc_cmd_off
+    type: state-icon
+  - entity: binary_sensor.termostato_sala_man
+    hold_action:
+      action: none
+    style:
+      bottom: '-6%'
+      left: 25%
+      opacity: 0.7
+      width: 0%
+      zoom: 150%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.termo_btc_cmd_man
+    type: state-icon
+  - entity: binary_sensor.termostato_sala_auto
+    hold_action:
+      action: none
+    style:
+      bottom: '-6%'
+      left: 45%
+      opacity: 0.7
+      width: 5%
+      zoom: 150%
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.termo_btc_cmd_auto
+    type: state-icon
+  - entity: binary_sensor.termostato_sala_stato
+    hold_action:
+      action: none
+    style:
+      bottom: '-6%'
+      left: 63%
+      opacity: 0.7
+      width: 10%
+      zoom: 150%
+    tap_action:
+      action: none
+    type: state-icon
+  - entity: binary_sensor.termostato_sala_boost
+    hold_action:
+      action: none
+    style:
+      bottom: 25%
+      left: 89%
+      opacity: 0.7
+      zoom: 180%
+    tap_action:
+      action: call-service
+      service: input_number.increment
+      service_data:
+        entity_id: input_number.boost
+    type: state-icon
+image: /local/immagini/X8000/sfondo.jpg
+type: picture-elements
