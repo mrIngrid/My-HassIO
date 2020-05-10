@@ -1,15 +1,30 @@
 aspect_ratio: auto
 elements:
-  - aspect_ratio: auto
-    entity: sensor.switch_min_boost
+  - entity: binary_sensor.termo_btc_boost
     hold_action:
       action: none
+    image: /local/immagini/X8000/striscia_rossa.jpg
+    state_filter:
+      'off': brightness(100%) saturate(0.1)
+      'on': brightness(100%) saturate(1.0) drop-shadow(0px 0px 10px red)
+    state_image: null
+    style:
+      left: 77.5%
+      opacity: 0.7
+      top: 50%
+      width: 2%
+    tap_action:
+      action: none
+    type: image
+  - aspect_ratio: auto
+    entity: sensor.termo_btc_switch_min
+    hold_action: none
     style:
       auto-height: true
       color: grey
       font-family: Bahnschrift Condensed
       font-size: 300%
-      left: 62%
+      left: 67%
       opacity: 0.8
       text-align: left
       top: 50%
@@ -17,8 +32,7 @@ elements:
       action: none
     type: state-label
   - entity: sensor.termo_btc_name
-    hold_action:
-      action: none
+    hold_action: none
     style:
       auto-height: true
       color: grey
@@ -31,29 +45,26 @@ elements:
     tap_action:
       action: none
     type: state-label
-  - entity: sensor.switch_grad_perc
-    hold_action:
-      action: none
+  - entity: sensor.termo_btc_switch_um
+    hold_action: none
     style:
       color: grey
       font-family: Bahnschrift Condensed
-      font-size: 505%
-      left: 52%
+      font-size: 450%
+      left: 50%
       opacity: 0.8
       text-align: left
       top: 40%
     tap_action:
-      service: script.turn_on
-      service_data:
-        entity_id: script.incrementa_switch_visual
+      service: none
     type: state-label
-  - entity: sensor.switch_visual_int
+  - entity: sensor.termo_btc_switch_visual_int
     hold_action: none
     style:
       color: grey
       font-family: Bahnschrift Condensed
       font-size: 1000%
-      left: 35%
+      left: 33%
       opacity: 0.8
       text-align: right
       top: 50%
@@ -61,24 +72,24 @@ elements:
       action: call-service
       service: script.turn_on
       service_data:
-        entity_id: script.incrementa_switch_visual
+        entity_id: script.termo_btc_incrementa_switch_visual
     type: state-label
-  - entity: sensor.switch_visual_dec
+  - entity: sensor.termo_btc_switch_visual_dec
     hold_action: none
     style:
       color: grey
       font-family: Bahnschrift Condensed
       font-size: 500%
-      left: 55%
+      left: 52%
       opacity: 0.5
-      top: 57%
+      top: 56%
     tap_action:
       action: call-service
       service: script.turn_on
       service_data:
-        entity_id: script.incrementa_switch_visual
+        entity_id: script.termo_btc_incrementa_switch_visual
     type: state-label
-  - entity: input_number.temperatura_termostato
+  - entity: input_number.termo_btc_set_sp
     hold_action: none
     icon: 'mdi:chevron-up'
     style:
@@ -91,9 +102,9 @@ elements:
       action: call-service
       service: script.turn_on
       service_data:
-        entity_id: script.aumenta_temperatura
+        entity_id: script.termo_btc_aumenta_temperatura
     type: icon
-  - entity: input_number.temperatura_termostato
+  - entity: input_number.termo_btc_set_sp
     hold_actio: none
     icon: 'mdi:chevron-down'
     style:
@@ -105,14 +116,13 @@ elements:
       action: call-service
       service: script.turn_on
       service_data:
-        entity_id: script.diminuisci_temperatura
+        entity_id: script.termo_btc_diminuisci_temperatura
     type: icon
-  - entity: binary_sensor.termostato_sala_spento
-    hold_action:
-      action: none
+  - entity: binary_sensor.termo_btc_spento
+    hold_action: none
     style:
       bottom: '-6%'
-      left: 15%
+      left: 10%
       opacity: 0.7
       width: 10%
       zoom: 150%
@@ -122,14 +132,13 @@ elements:
       service_data:
         entity_id: script.termo_btc_cmd_off
     type: state-icon
-  - entity: binary_sensor.termostato_sala_man
-    hold_action:
-      action: none
+  - entity: binary_sensor.termo_btc_man
+    hold_action: none
     style:
       bottom: '-6%'
-      left: 25%
+      left: 27%
       opacity: 0.7
-      width: 0%
+      width: 10%
       zoom: 150%
     tap_action:
       action: call-service
@@ -137,14 +146,13 @@ elements:
       service_data:
         entity_id: script.termo_btc_cmd_man
     type: state-icon
-  - entity: binary_sensor.termostato_sala_auto
-    hold_action:
-      action: none
+  - entity: binary_sensor.termo_btc_auto
+    hold_action: none
     style:
       bottom: '-6%'
       left: 45%
       opacity: 0.7
-      width: 5%
+      width: 10%
       zoom: 150%
     tap_action:
       action: call-service
@@ -152,9 +160,8 @@ elements:
       service_data:
         entity_id: script.termo_btc_cmd_auto
     type: state-icon
-  - entity: binary_sensor.termostato_sala_stato
-    hold_action:
-      action: none
+  - entity: binary_sensor.termo_btc_stato_custom
+    hold_action: none
     style:
       bottom: '-6%'
       left: 63%
@@ -162,11 +169,13 @@ elements:
       width: 10%
       zoom: 150%
     tap_action:
-      action: none
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.termo_btc_cmd_function
     type: state-icon
-  - entity: binary_sensor.termostato_sala_boost
-    hold_action:
-      action: none
+  - entity: binary_sensor.termo_btc_boost
+    hold_action: none
     style:
       bottom: 25%
       left: 89%
@@ -174,9 +183,9 @@ elements:
       zoom: 180%
     tap_action:
       action: call-service
-      service: input_number.increment
+      service: script.turn_on
       service_data:
-        entity_id: input_number.boost
+        entity_id: script.termo_btc_incrementa_boost
     type: state-icon
 image: /local/immagini/X8000/sfondo.jpg
 type: picture-elements
