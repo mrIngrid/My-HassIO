@@ -8,10 +8,10 @@ homeassistant:
   customize:
     package.node_anchors:
       customize: &customize
-        package: 'X8000'
+        package: 'termo_btc X8000'
         version: '1.0'
         author: 'Ducatista80'
-        reference: 'HassioHelp'
+        reference: 'DomoLife'
         
       expose: &expose
         <<: *customize
@@ -25,21 +25,9 @@ homeassistant:
       setting:
         topic stato termostato: &topic_status '/bticino/4360d386-bbd1-647d-e053-20182d0adb4b/status'
         topic comando termostato: &topic_cmd '/bticino/4360d386-bbd1-647d-e053-20182d0adb4b/cmd'
-        indirizzo url: &url 'https://xxxxx.duckdns.org:5588/rest' 
+        #deprecato rest_command, al riavvio, la card si aggiornera in automatico dopo qualche minuto. Se volete, potete comunque metterlo
+        #al di fuori del package.
     ##--------------------------------------------------------------------##
-
-#########################################################
-#                                                       #
-#   REST COMMAND PER AGGIORNARE X8000 ALL'AVVIO DI HA   #
-#                                                       #
-#########################################################
-rest_command:
-  bticino:
-    url: *url
-    username: admin
-    password: password
-#########################################################
-
 
 
 #########################################################
@@ -50,192 +38,115 @@ rest_command:
 sensor:
 
   #### SENSOR MQTT ####
-
+  
+    ### nome
   - platform: mqtt
     name: termo_btc_name
     state_topic: *topic_status
     value_template: '{{ value_json.name }}'
 
+    ### temperatura
   - platform: mqtt
-    name: Termo Sala Temperature
+    name: termo_btc_temperatura
     state_topic: *topic_status
     value_template: '{{ value_json.temperature }}'
     
+    ### umidità
   - platform: mqtt
-    name: Termo Sala Umidità
+    name: termo_btc_umidita
     state_topic: *topic_status
     value_template: '{{ value_json.humidity|int }}'
-    
+
+    ### funzione
   - platform: mqtt
-    name: Termo Sala Funzione
+    name: termo_btc_funzione
     state_topic: *topic_status
     value_template: "{{ value_json.function }}"
-    
+
+    ### mode
   - platform: mqtt
-    name: Termo Sala Mode
+    name: termo_btc_mode
     state_topic: *topic_status
     value_template: "{{ value_json.mode }}"
-    
+
+    ### set point
   - platform: mqtt
-    name: Termo Sala Set Point
+    name: termo_btc_set_point
     state_topic: *topic_status
     value_template: "{{ value_json.setpoint|round (1) }}"
-    
+
+    ### stato
   - platform: mqtt
-    name: Termo Sala Stato
+    name: termo_btc_stato
     state_topic: *topic_status
     value_template: "{{ value_json.state }}"
 
+    ### programma
   - platform: mqtt
-    name: Termo Sala Programma
+    name: termo_btc_programma
     state_topic: *topic_status
-    value_template: "{{ value_json.state|float|round(0) }}"
+    value_template: "{{ value_json.state|float|int }}"
+
 
   #### SENSOR TEMPLATE ####
   - platform: template
     sensors:
 
-      ### Temperatura
-      termostato_sala_temperatura:
-        friendly_name: "Termostato Sala Temperatura"
+      ### Switch visualizzazione Temp Sp Umid
+      termo_btc_switch_visual_int:
         value_template: >
-            {% if states('sensor.termo_sala_temperature') != "unknown" %}
-              {{ states('sensor.termo_sala_temperature')|round(0) }}
-            {% else %}
-            {% endif %}
-        icon_template: mdi:home-thermometer
-        
-      ### Temperatura decimale
-      termostato_sala_decimale_temp:
-        friendly_name: "Termostato Sala decimale Temp"
-        value_template: >
-            {% set value = states('sensor.termo_sala_temperature')|float %}
-            {% set intero = states('sensor.termo_sala_temperature')|int %}
-            {% set decimale = ((value - intero) * 10)|round(0) %}
-            {{ decimale }}
-
-
-      ### Funzione
-      termostato_sala_funzione:
-        friendly_name: "Termostato Sala Funzione"
-        value_template: >-
-            {% set valore = states('sensor.termo_sala_funzione') %}
-            {% if valore == 'COOLING' %}FREDDO
-            {% elif valore == 'HEATING' %}CALDO
-            {% endif %}
-        icon_template: >-
-            {% set valore = states('sensor.termo_sala_funzione') %}
-            {% if valore == 'COOLING' %}mdi:snowflake
-            {% elif valore == 'HEATING' %}mdi:white-balance-sunny
-            {% endif %}
-
-      ### Nome
-      termostato_sala_nome:
-        friendly_name: "Termostato Sala Nome"
-        value_template: >
-            {% if states('sensor.termo_sala_nome') != "unknown" %}
-              {{ states('sensor.termo_sala_nome') }}
-            {% endif %}
-
-      ### Umidità
-      termostato_sala_umidita:
-        friendly_name: "Termostato Sala Umidità"
-        value_template: >
-            {% if states('sensor.termo_sala_umidita') != "unknown" %}
-              {{ states('sensor.termo_sala_umidita') }}
-            {% endif %}
-        icon_template: mdi:water-percent
-
-      ### Setpoint ricevuto
-      termostato_sala_set_point:
-        friendly_name: "Termostato Sala Set Point"
-        value_template: >
-            {% if states('sensor.termo_sala_set_point') != "unknown" %}
-              {{ states('sensor.termo_sala_set_point') }}
-            {% endif %}
-        icon_template: mdi:thermostat
-
-      ### Setpoint decimale impostato
-      termostato_sala_decimale_sp:
-        friendly_name: "Termostato Sala decimale Set Point"
-        value_template: >
-            {% set value = states('input_number.temperatura_termostato')|float %}
-            {% set intero = states('input_number.temperatura_termostato')|int %}
-            {% set decimale = ((value - intero) * 10)|round(0) %}
-            {{ decimale }}
-
-      ### Programma
-      termostato_sala_programma:
-        friendly_name: "Termostato Sala Programma"
-        value_template: >
-            {% if states('sensor.termo_sala_programma') != "unknown" %}
-              {{ states('sensor.termo_sala_programma') }}
-            {% endif %}
-        icon_template: mdi:calendar-month
-
-      ### Switch visualizzazione Temperatura Setpoint
-      switch_visual_int:
-        friendly_name: "Switch Visualizzazione Numero Intero"
-        value_template: >
-            {% if is_state('input_number.boost', '0.0') %}
-              {% if is_state('input_boolean.temperatura_cambiata', 'on') or is_state('input_number.switch_visual', '1.0') %}
-                {{ states('input_number.temperatura_termostato')|int }}
-              {% elif is_state('input_number.switch_visual', '0.0') %}
-                {{ states('sensor.termostato_sala_temperatura') }}
-              {% elif is_state('input_number.switch_visual', '2.0') %}
-                {{ states('sensor.termo_sala_umidita') }}
+            {% if is_state('input_number.termo_btc_set_boost', '0.0') %}
+              {% if is_state('input_boolean.termo_btc_change_temp', 'on') or is_state('input_number.termo_btc_switch_visual', '1.0') %}
+                {{ states('input_number.termo_btc_set_sp')|int }}
+              {% elif is_state('input_number.termo_btc_switch_visual', '0.0') %}
+                {{ states('sensor.termo_btc_temperatura')|int }}
+              {% elif is_state('input_number.termo_btc_switch_visual', '2.0') %}
+                {{ states('sensor.termo_btc_umidita') }}
               {% endif %}
-            {% elif is_state('input_number.boost', '30.0') %}30
-            {% elif is_state('input_number.boost', '60.0') %}60
-            {% elif is_state('input_number.boost', '90.0') %}90
+            {% elif is_state('input_number.termo_btc_set_boost', '30.0') %}30
+            {% elif is_state('input_number.termo_btc_set_boost', '60.0') %}60
+            {% elif is_state('input_number.termo_btc_set_boost', '90.0') %}90
             {% endif %}
 
       ### Switch decimale visualizzazione Temperatura Setpoint
-      switch_visual_dec:
-        friendly_name: "Switch decimale visualizzazione Temperatura Setpoint"
+      termo_btc_switch_visual_dec:
         value_template: >
-            {% if is_state('input_number.boost', '0.0') %}
-              {% if is_state('input_boolean.temperatura_cambiata', 'on') or is_state('input_number.switch_visual', '1.0') %}
-                {{ states('sensor.termostato_sala_decimale_sp') }}
-              {% elif is_state('input_number.switch_visual', '0.0') %}
-                {{ states('sensor.termostato_sala_decimale_temp') }}
-              {% elif is_state('input_number.switch_visual', '2.0') %}
+            {% set value_temp = states('sensor.termo_btc_temperatura')|float %}
+            {% set intero_temp = states('sensor.termo_btc_temperatura')|int %}
+            {% set decimale_temp = ((value_temp - intero_temp) * 10)|round(0) %}
+            {% set value_sp = states('input_number.termo_btc_set_sp')|float %}
+            {% set intero_sp = states('input_number.termo_btc_set_sp')|int %}
+            {% set decimale_sp = ((value_sp - intero_sp) * 10)|round(0) %}
+            {% if is_state('input_number.termo_btc_set_boost', '0.0') %}
+              {% if is_state('input_boolean.termo_btc_change_temp', 'on') or is_state('input_number.termo_btc_switch_visual', '1.0') %}
+                {{ decimale_sp }}
+              {% elif is_state('input_number.termo_btc_switch_visual', '0.0') %}
+                {{ decimale_temp }}
+              {% elif is_state('input_number.termo_btc_switch_visual', '2.0') %}
               {% endif %}
             {% endif %}
 
-      ### Switch decimale visualizzazione Umidità
-      switch_temp_hum:
-        friendly_name: "Switch decimale visualizzazione Umidità"
+      ### Visualizza Gradi o Percentuale o Minuti
+      termo_btc_switch_um:
         value_template: >
-            {% if is_state('input_number.boost', '0.0') %}
-              {% if is_state('input_boolean.temperatura_cambiata', 'on') %}
-                {{ states('sensor.termostato_sala_decimale_sp') }}
-              {% else %}
-                {{ states('sensor.termostato_sala_decimale_temp') }}
-              {% endif %}
-            {% endif %}
-
-      ### Visualizza  Gradi o Percentuale
-      switch_grad_perc:
-        friendly_name: "Switch Visualizzazione Gradi Percentuale"
-        value_template: >
-            {% if is_state('input_number.boost', '0.0') %}
-              {% if is_state('input_number.switch_visual', '0.0') %}°
-              {% elif is_state('input_number.switch_visual', '1.0')%}°
-              {% elif is_state('input_number.switch_visual', '2.0')%}%
+            {% if is_state('input_number.termo_btc_set_boost', '0.0') %}
+              {% if is_state('input_number.termo_btc_switch_visual', '0.0') %}°
+              {% elif is_state('input_number.termo_btc_switch_visual', '1.0')%}°
+              {% elif is_state('input_number.termo_btc_switch_visual', '2.0')%}%
               {% endif %}
             {% endif %}
 
       ### Switch minuti boost
-      switch_min_boost:
-        friendly_name: "Switch Visualizzazione minuti"
+      termo_btc_switch_min:
         value_template: >
-            {% if is_state('input_number.boost', '0.0') %}
-            {% elif is_state('input_number.boost', '30.0') %}MIN
-            {% elif is_state('input_number.boost', '60.0') %}MIN
-            {% elif is_state('input_number.boost', '90.0') %}MIN
+            {% if is_state('input_boolean.termo_btc_change_temp', 'on') or
+                  is_state('input_number.termo_btc_switch_visual', '1.0')%}SET
+            {% elif is_state('input_number.termo_btc_set_boost', '0.0') %}
+            {% elif is_state('input_number.termo_btc_set_boost', '30.0') %}MIN
+            {% elif is_state('input_number.termo_btc_set_boost', '60.0') %}MIN
+            {% elif is_state('input_number.termo_btc_set_boost', '90.0') %}MIN
             {% endif %}
-
+                
 ########################################################
 
 
@@ -249,40 +160,42 @@ binary_sensor:
 
   - platform: template
     sensors:
-      termostato_sala_stato:
-        friendly_name: "Termostato Sala Stato"
+    
+    ### stato relè del termostato
+      termo_btc_stato_custom:
         value_template: >-
-            {{ is_state('sensor.termo_sala_stato', 'ACTIVE') }}
+            {{ is_state('sensor.termo_btc_stato', 'ACTIVE') }}
         icon_template: >-
-            {% set funzione = states('sensor.termo_sala_funzione') %}
+            {% set funzione = states('sensor.termo_btc_funzione') %}
             {% if funzione == 'HEATING' %}mdi:fire
             {% elif funzione == 'COOLING' %}mdi:snowflake
             {% endif %}
         device_class: power
 
-      termostato_sala_spento:
-        friendly_name: "Termostato Sala Spento"
-        value_template: "{{ is_state('sensor.termo_sala_mode', 'PROTECTION') or is_state('sensor.termo_sala_mode', 'OFF') }}"
+    ### stato funzionamento off o protection
+      termo_btc_spento:
+        value_template: "{{ is_state('sensor.termo_btc_mode', 'PROTECTION') or is_state('sensor.termo_btc_mode', 'OFF') }}"
         icon_template: mdi:power
         device_class: power
-        
-      termostato_sala_auto:
-        friendly_name: "Termostato Sala in Automatico"
-        value_template: "{{ is_state('sensor.termo_sala_mode', 'AUTOMATIC') }}"
+
+    ### stato funzionamento in automatico
+      termo_btc_auto:
+        value_template: "{{ is_state('sensor.termo_btc_mode', 'AUTOMATIC') }}"
         icon_template: mdi:autorenew
         device_class: power
 
-      termostato_sala_man:
-        friendly_name: "Termostato Sala in Manuale"
-        value_template: "{{ is_state('sensor.termo_sala_mode', 'MANUAL') }}"
+    ### stato funzionamento in manuale
+      termo_btc_man:
+        value_template: "{{ is_state('sensor.termo_btc_mode', 'MANUAL') }}"
         icon_template: mdi:hand-right
         device_class: power
 
-      termostato_sala_boost:
-        friendly_name: "Termostato Sala Boost"
-        value_template: "{{ is_state('sensor.termo_sala_mode', 'BOOST') }}"
+    ### stato funzionamento in boost
+      termo_btc_boost:
+        value_template: "{{ is_state('sensor.termo_btc_mode', 'BOOST') }}"
         icon_template: mdi:play-speed
         device_class: power
+
   ########################################
 
 
@@ -294,35 +207,33 @@ binary_sensor:
 
   #### INPUT BOOLEAN ####
 input_boolean:
+  termo_btc_change_temp:
+    initial: 'off'
+    
+  termo_btc_change_boost:
+    initial: 'off'
 
-  temperatura_cambiata:
 
-  boost_active:
-
-  #### INPUT TEXT ####
-input_text:
-
-  ultimo_stato_before_boost:
-  
   #### INPUT NUMBER ####
 input_number:
-  temperatura_termostato:
-    # initial: 19
+
+  termo_btc_set_sp:
     min: 7
     max: 30
     step: 0.5
 
-  boost:
+  termo_btc_set_boost:
     initial: 0
     min: 0
     max: 120
-    step: 30 
+    step: 30
 
-  switch_visual:
+  termo_btc_switch_visual:
     initial: 0
     min: 0
     max: 3
     step: 1 
+
 #########################################################
 
 
@@ -335,140 +246,98 @@ input_number:
 
 automation:
 
-  #### COMANDI ####
+  ##########################
+  #### RICHIAMO COMANDI ####
+  ##########################
   
-  - id: 'set point temperatura cambiata'
-    alias: Invia Set Point Temperatura Termostato
+  #### COMANDO SET POINT ####
+  - id: 'termo_btc set point temperatura cambiata'
+    alias: termo_btc Invia Set Point Temperatura Termostato
     trigger:
       platform: state
-      entity_id: input_boolean.temperatura_cambiata
+      entity_id: input_boolean.termo_btc_change_temp
       to: 'on'
       for: '00:00:10'
-    condition:
-      condition: state
-      entity_id: input_boolean.boost_active
-      state: 'off'
     action:
       - service: script.turn_on
-        entity_id: script.termo_btc_cmd_setpoint
+        data_template:
+          entity_id: script.termo_btc_cmd_setpoint
 
-  - id: 'richiama script comando boost'
-    alias: Richiama Script comando boost
+  #### COMANDO BOOST ####
+  - id: 'termo_btc richiama script comando boost'
+    alias: termo_btc Richiama Script comando boost
     trigger:
-      platform: numeric_state
-      entity_id: input_number.boost
-      above: '0.0'
+      platform: state
+      entity_id: input_boolean.termo_btc_change_boost
+      to: 'on'
       for: '00:00:10'
     action:
-      - service: input_text.set_value
-        data_template:
-          entity_id: input_text.ultimo_stato_before_boost
-          value: >-
-                {% if states('sensor.termo_sala_mode') != 'BOOST' %}
-                  {{ states('sensor.termo_sala_mode') }}
-                {% else %}
-                  {{ states('input_text.ultimo_stato_before_boost') }}
-                {% endif %}
       - service: script.turn_on
         entity_id: script.termo_btc_cmd_boost
 
-  - id: 'richiama ultima funzione'
-    alias: Richiama Ultima Funzione Prima del BOOST
-    trigger:
-      platform: numeric_state
-      entity_id: input_number.boost
-      below: '20'
-      for: '00:00:04'
-    condition:
-      condition: state
-      entity_id: input_boolean.boost_active
-      state: 'on'
-    action:
-      - service: script.turn_on
-        data_template:
-          entity_id: >-
-            {% if is_state('input_text.ultimo_stato_before_boost', 'PROTECTION') %}script.termo_btc_cmd_off
-            {% elif is_state('input_text.ultimo_stato_before_boost', 'AUTOMATIC') %}script.termo_btc_auto
-            {% elif is_state('input_text.ultimo_stato_before_boost', 'MANUAL') %}script.termo_btc_cmd_man
-            {% endif %}
-  #######################################
+  ######################################
 
+  ##############################
+  #### AUTOMAZIONI PER CARD ####
+  ##############################
 
-  #### FEEDBACK ####
-  
-  - id: 'ricevi set point temperatura'
-    alias: Riceve Set Point Temperatura Termostato
-    trigger:
-      platform: state
-      entity_id: sensor.termostato_sala_set_point
-    condition:
-      condition: state
-      entity_id: input_boolean.temperatura_cambiata
-      state: "off"
-    action:
-      - service: input_number.set_value
-        data_template:
-          entity_id: input_number.temperatura_termostato
-          value: "{{states('sensor.termostato_sala_set_point')}}"
-      - service: input_boolean.turn_off
-        data:
-          entity_id: input_boolean.boost_active
-  #######################################
-
-
-  #### LOVELACE ####
-
-  - id: 'azzera boost'
-    alias: Azzera Boost
-    trigger:
-      platform: numeric_state
-      entity_id: input_number.boost
-      above: '90.0'
-    action:
-      - service: input_number.set_value
-        data:
-          entity_id: input_number.boost
-          value: "0.0"
-
-  - id: 'azzera switch visual'
-    alias: Azzera Switch Visualizzazione
+  #### AZZERAMENTO SET BOOST ####
+  - id: 'termo_btc azzera boost'
+    alias: termo_btc Azzera Boost
     trigger:
       - platform: numeric_state
-        entity_id: input_number.switch_visual
+        entity_id: input_number.termo_btc_set_boost
+        above: '90.0'
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_set_boost
+          value: "0.0"
+
+  #### AZZERAMENTO SWITCH VISUAL ####
+  - id: 'termo_btc azzera switch visual'
+    alias: termo_btc Azzera Switch Visualizzazione
+    trigger:
+      - platform: numeric_state
+        entity_id: input_number.termo_btc_switch_visual
         above: '2.0'
       - platform: numeric_state
-        entity_id: input_number.switch_visual
+        entity_id: input_number.termo_btc_switch_visual
         above: '0.0'
-        for: '00:00:15'
+        for: '00:00:10'
     action:
       - service: input_number.set_value
         data:
-          entity_id: input_number.switch_visual
+          entity_id: input_number.termo_btc_switch_visual
           value: "0.0"
 
-  - id: 'azzera vari input'
-    alias: Azzera vari input dopo aver premuto il boost
+  #### AZZERARE VALORI DOPO AVER PREMUTO BOOST ####
+  - id: 'termo_btc azzera vari input'
+    alias: termo_btc Azzera vari input dopo aver premuto il boost
     trigger:
       platform: state
-      entity_id: input_number.boost
+      entity_id: input_number.termo_btc_set_boost
     action:
       - service: input_number.set_value
         data:
-          entity_id: input_number.switch_visual
+          entity_id: input_number.termo_btc_switch_visual
           value: "0.0"
       - service: input_boolean.turn_off
         data:
-          entity_id: input_boolean.temperatura_cambiata
+          entity_id: input_boolean.termo_btc_change_temp
 
-  #### AGGIORNA X8000 ALL'AVVIO DI HA ####
-  - id: 'Aggiorna X800'
-    alias: Aggiorna Bticino all'avvio
+  #### RICEVE SET POINT TEMPERATURA ####
+  - id: 'termo_btc ricevi set point temperatura'
+    alias: termo_btc Riceve Set Point Temperatura Termostato
     trigger:
-    - event: start
-      platform: homeassistant
+      platform: state
+      entity_id: sensor.termo_btc_set_point
     action:
-    - data: {}
-      service: rest_command.bticino
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.termo_btc_set_sp
+          value: "{{states('sensor.termo_btc_set_point')}}"
+
 
 ########################################################
 
@@ -485,167 +354,207 @@ script:
   #### INVIO COMANDO SET POINT ####
   termo_btc_cmd_setpoint:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: input_boolean.termo_btc_change_boost
+        state: 'off'
       - service: mqtt.publish
         data_template:
           topic: *topic_cmd
           payload: >-
-                {% set my_test_json = {"temperature": states.input_number.temperatura_termostato.state} %}
+                {% set my_test_json = {"temperature": states.input_number.termo_btc_set_sp.state} %}
                 {{my_test_json.temperature}}
       - service: input_boolean.turn_off
         data:
-          entity_id: input_boolean.temperatura_cambiata
-      - service: input_boolean.turn_off
+          entity_id: input_boolean.termo_btc_change_temp
+      - service: input_number.set_value
         data:
-          entity_id: input_boolean.boost_active
+          entity_id: input_number.termo_btc_switch_visual
+          value: "0.0"
 
-  #######################################
-  
   
   #### INVIO COMANDO AUTO ####       
   termo_btc_cmd_auto:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_auto
+        state: 'off'
       - service: mqtt.publish
         data_template:
           topic: *topic_cmd
           payload: AUTOMATIC
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_set_boost
+          value: "0.0"
       - service: input_boolean.turn_off
         data:
-          entity_id: input_boolean.boost_active
+          entity_id: input_boolean.termo_btc_change_boost
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_switch_visual
+          value: "0.0"
 
-  #######################################
 
   #### INVIO COMANDO MANUALE ####       
   termo_btc_cmd_man:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_man
+        state: 'off'
       - service: mqtt.publish
         data_template:
           topic: *topic_cmd
           payload: MANUAL
-      - service: input_boolean.turn_off
+      - service: input_number.set_value
         data:
-          entity_id: input_boolean.boost_active
+          entity_id: input_number.termo_btc_set_boost
+          value: "0.0"
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_switch_visual
+          value: "0.0"
 
-  #######################################
-  
   
   #### INVIO COMANDO PROTECTION #### 
   termo_btc_cmd_off:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_spento
+        state: 'off'
       - service: mqtt.publish
         data_template:
           topic: *topic_cmd
           payload: PROTECTION
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_set_boost
+          value: "0.0"
       - service: input_boolean.turn_off
         data:
-          entity_id: input_boolean.boost_active
-  #######################################
-  
-  
+          entity_id: input_boolean.termo_btc_change_boost
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.termo_btc_switch_visual
+          value: "0.0"
+
+
   #### INVIO COMANDO BOOST ####
   termo_btc_cmd_boost:
     sequence:
-      - wait_template: "{% if states('input_number.boost') != '0.0' %} true {%else%} false {%endif%}"
+      - wait_template: "{% if states('input_number.termo_btc_set_boost') != '0.0' %} true {%else%} false {%endif%}"
         timeout: '00:00:01'
         continue_on_timeout: 'false'
       - service: mqtt.publish
         data_template:
           topic: *topic_cmd
           payload: >-
-                {% set my_test_json = {"mode": states.input_number.boost.state|int} %}
-                BOOST-{{my_test_json.mode}}
+                {% set my_test_json = {"boost": states.input_number.termo_btc_set_boost.state|int} %}
+                BOOST-{{my_test_json.boost}}
       - service: input_number.set_value
         data:
-          entity_id: input_number.boost
+          entity_id: input_number.termo_btc_set_boost
           value: "0.0"
-      - delay: '00:00:05'
-      - service: input_boolean.turn_on
-        data:
-          entity_id: input_boolean.boost_active
       - service: input_number.set_value
         data:
-          entity_id: input_number.switch_visual
+          entity_id: input_number.termo_btc_switch_visual
           value: "0.0"
+      - service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.termo_btc_change_boost
 
-  #######################################
-  
 
-########### LOVELACE ###########
+  #### INVIO COMANDO HEATING - COOLING ####
+  termo_btc_cmd_function:
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: *topic_cmd
+          payload: >-
+            {% set funzione = states('sensor.termo_btc_funzione') %}
+            {% if funzione == 'HEATING' %}COOLING
+            {% elif funzione == 'COOLING' %}HEATING
+            {% endif %}
+
+          
+  #########################
+  #### SCRIPT PER CARD ####
+  #########################
 
   #### AUMENTA SET POINT ####
-  aumenta_temperatura:
+  termo_btc_aumenta_temperatura:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
-      - wait_template: "{{ is_state('input_boolean.boost_active', 'off') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: input_boolean.termo_btc_change_boost
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_boost
+        state: 'off'
       - service: input_number.increment
         data:
-          entity_id: input_number.temperatura_termostato 
+          entity_id: input_number.termo_btc_set_sp 
       - service: input_boolean.turn_on
         data:
-          entity_id: input_boolean.temperatura_cambiata
-      - service: input_number.set_value
-        data:
-          entity_id: input_number.switch_visual
-          value: "0.0"
-      - service: input_boolean.turn_off
-        data:
-          entity_id: input_boolean.boost_active
+          entity_id: input_boolean.termo_btc_change_temp
           
-  #######################################
-  
           
   #### DIMINUISCI SET POINT ####
-  diminuisci_temperatura:
+  termo_btc_diminuisci_temperatura:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
-      - wait_template: "{{ is_state('input_boolean.boost_active', 'off') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: input_boolean.termo_btc_change_boost
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_boost
+        state: 'off'
       - service: input_number.decrement
         data:
-          entity_id: input_number.temperatura_termostato 
+          entity_id: input_number.termo_btc_set_sp 
       - service: input_boolean.turn_on
         data:
-          entity_id: input_boolean.temperatura_cambiata
-      - service: input_number.set_value
-        data:
-          entity_id: input_number.switch_visual
-          value: "0.0"
-      - service: input_boolean.turn_off
-        data:
-          entity_id: input_boolean.boost_active
-
-  #######################################
+          entity_id: input_boolean.termo_btc_change_temp
 
 
   #### INCREMENTA SWITCH VISUAL ####
-  incrementa_switch_visual:
+  termo_btc_incrementa_switch_visual:
     sequence:
-      - wait_template: "{{ is_state('input_number.boost', '0.0') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
-      - wait_template: "{{ is_state('input_boolean.boost_active', 'off') }}"
-        timeout: '00:00:01'
-        continue_on_timeout: 'false'
+      - condition: state
+        entity_id: input_number.termo_btc_set_boost
+        state: '0.0'
+      - condition: state
+        entity_id: input_boolean.termo_btc_change_temp
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.termo_btc_boost
+        state: 'off'
       - service: input_number.increment
         data:
-          entity_id: input_number.switch_visual 
+          entity_id: input_number.termo_btc_switch_visual 
 
-  #######################################
+
+  #### INCREMENTA BOOST ####
+  termo_btc_incrementa_boost:
+    sequence:
+      - service: input_number.increment
+        data:
+          entity_id: input_number.termo_btc_set_boost
+      - service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.termo_btc_change_boost
