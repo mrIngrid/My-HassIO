@@ -1,0 +1,227 @@
+cards:
+  - entities:
+      - entity: sensor.last_boot
+        icon: 'mdi:clock'
+      - entity: sensor.ha_start
+        icon: 'mdi:clock'
+    show_header_toggle: false
+    title: Rpi 4
+    type: entities
+  - cards:
+      - color_thresholds:
+          - color: '#bf4040'
+            from: 50
+            to: 100
+          - color: '#ffde00'
+            from: 10
+            to: 49
+          - color: '#40bf40'
+            from: 0
+            to: 9
+        entities:
+          - entity: sensor.processor_use
+            index: 0
+            name: CPU
+        icon: 'mdi:memory'
+        type: 'custom:mini-graph-card'
+      - color_thresholds:
+          - color: '#ffde00'
+            value: 60
+          - color: '#bf4040'
+            value: 60
+          - color: '#cccccc'
+            value: 0
+        decimals: 0
+        entities:
+          - entity: sensor.cpu_temperature
+            index: 0
+            name: CPU Temperature
+        type: 'custom:mini-graph-card'
+    type: horizontal-stack
+  - cards:
+      - type: 'custom:button-card'
+        entity: sensor.cpu_temperature
+        icon: 'mdi:desktop-tower-monitor'
+        aspect_ratio: 1/1
+        name: Raspberry Pi4
+        tap_action:
+          action: navigate
+          navigation_path: '#system'
+        styles:
+          card:
+            - padding: 10%
+            - font-size: 12px
+            - text-shadow: 0px 0px 5px black
+            - text-transform: uppercase
+            - font-variant: small-caps
+          grid:
+            - grid-template-areas: '"i temp" "n n" "cpu cpu" "ram ram" "ssd ssd"'
+          name:
+            - font-weight: bold
+            - font-size: 12px
+            - color: white
+            - padding-bottom: 4px
+          img_cell:
+            - justify-content: start
+            - align-items: start
+            - margin: none
+          icon:
+            - color: |
+                [[[
+                  if (entity.state < 50) return 'green';
+                  if (entity.state >= 60 && entity.state < 80) return 'orange';
+                  else return 'red';
+                ]]]
+            - width: 70%
+            - margin-top: '-10%'
+          custom_fields:
+            temp:
+              - align-self: start
+              - justify-self: end
+              - '--text-color-sensor': >
+                  [[[ if (entity.state < 50) return 'green'; if (entity.state >=
+                  60 && entity.state < 80) return 'orange'; else return 'red';
+                  ]]]
+            cpu:
+              - padding-bottom: 2px
+              - align-self: middle
+              - justify-self: start
+              - '--text-color-sensor': >-
+                  [[[ if (states["sensor.processor_use"].state > 80) return
+                  "red"; ]]]
+            ram:
+              - padding-bottom: 2px
+              - align-self: middle
+              - justify-self: start
+              - '--text-color-sensor': >-
+                  [[[ if (states["sensor.memory_use_percent"].state > 80) return
+                  "red"; ]]]
+            ssd:
+              - align-self: middle
+              - justify-self: start
+              - '--text-color-sensor': >-
+                  [[[ if (states["sensor.disk_use_percent_home"].state > 80)
+                  return "red"; ]]]
+        custom_fields:
+          temp: |
+            [[[
+              return `<ha-icon
+                icon="mdi:thermometer"
+                style="width: 18px; height: 18px; color: var(--text-color-sensor);">
+                </ha-icon><span>${entity.state}°C</span>`
+            ]]]
+          cpu: |
+            [[[
+              return `<ha-icon
+                icon="mdi:cpu-64-bit"
+                style="width: 12px; height: 12px; color: var(--paper-item-icon-active-color);">
+                </ha-icon><span>  CPU: <span style="color: var(--text-color-sensor);">${states['sensor.processor_use'].state}%</span></span>`
+            ]]]
+          ram: |
+            [[[
+              return `<ha-icon
+                icon="mdi:memory"
+                style="width: 12px; height: 12px; color: var(--paper-item-icon-active-color);">
+                </ha-icon><span>  RAM: <span style="color: var(--text-color-sensor);">${states['sensor.memory_use_percent'].state}%</span></span>`
+            ]]]
+          ssd: |
+            [[[
+              return `<ha-icon 
+                icon="mdi:harddisk"
+                style="width: 12px; height: 12px; color: var(--paper-item-icon-active-color);">
+                </ha-icon><span>  SSD: <span style="color: var(--text-color-sensor);">${states['sensor.disk_use_percent_home'].state}%</span></span>`
+            ]]]
+      - entity: sensor.speedtest_download
+        type: gauge
+      - entity: sensor.speedtest_upload
+        type: gauge
+    type: horizontal-stack
+  - align: split
+    animation: auto
+    attribute: false
+    card_style: false
+    charge_entity: false
+    columns: 1
+    decimal: false
+    delay: 5000
+    direction: right
+    entities:
+      - entity: sensor.disk_use_percent_home
+        icon: 'mdi:harddisk'
+        severity:
+          - color: '#40bf40'
+            value: 10
+          - color: '#ffde00'
+            value: 50
+          - color: '#bf4040'
+            value: 100
+        title: HDD
+      - entity: sensor.memory_use_percent
+        icon: 'mdi:memory'
+        severity:
+          - color: '#40bf40'
+            value: 0
+          - color: var(--primary-color)
+            value: 50
+          - color: '#bf4040'
+            value: 100
+        title: RAM
+    entity_config: true
+    height: 40px
+    icon: false
+    icon_position: 'off'
+    icon_style:
+      filter: none
+      height: 34px
+      width: 34px
+    indicator: auto
+    limit_value: false
+    max: 100
+    min: 0
+    minmax_style: false
+    padding: 5px
+    positions:
+      icon: 'off'
+      indicator: 'off'
+      title: outside
+    rounding: 5px
+    saturation: 50%
+    severity:
+      - color: '#bf4040'
+        from: 50
+        to: 100
+      - color: '#ffde00'
+        from: 10
+        to: 49
+      - color: '#40bf40'
+        from: 0
+        to: 9
+    show_icon: true
+    show_minmax: false
+    show_value: true
+    speed: 1000
+    style: |-
+      bar-card-current, bar-card-backgroundbar {
+        border-radius: 20px;
+      }
+      bar-card-value {
+        margin-right: auto;
+      }
+    tap_action: info
+    target: false
+    title: false
+    title_position: inside
+    title_style:
+      color: var(--primary-text-color)
+      font-weight: normal
+      text-shadow: none
+    type: 'custom:bar-card'
+    unit_of_measurement: false
+    value_style:
+      color: var(--primary-text-color)
+      font-size: 18px
+      font-weight: normal
+      text-shadow: none
+    visibility: false
+    width: 100%
+type: 'custom:vertical-stack-in-card'
