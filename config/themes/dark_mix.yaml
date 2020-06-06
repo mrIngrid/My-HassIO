@@ -1,11 +1,16 @@
 darkmix:
+
+#button #"#f2f0fa"
+  deactive-background-button-color: "#333336" 
+
+  bar-card-card: 'var(--primary-color)'
 # Main colors
   primary-color: '#03A9F4'
   accent-color: 'red'
   dark-primary-color: 'var(--primary-color)'
   light-primary-color: 'var(--primary-color)'
   
-  ha-card-border-radius: '25px'
+  ha-card-border-radius: '20px'
 # Text colors
   primary-text-color: 'white'
   text-primary-color: 'var(--primary-text-color)'
@@ -27,10 +32,11 @@ darkmix:
   paper-listbox-background-color: 'var(--primary-background-color)'
   paper-grey-50: 'var(--primary-text-color)'
   sidebar-icon-color: 'var(--primary-color)'
-
+  sidebar-background-color: '#141A32'
+  
 # Paper card
   paper-card-header-color: 'var(--primary-color)'
-  paper-card-background-color: 'rgba(0,0,20,0.1)' #"#1E2747"
+  paper-card-background-color: 'rgba(0,0,20,0.4)' #"#1E2747"
   paper-dialog-background-color: 'var(--primary-background-color)'
   paper-item-icon-color: 'var(--primary-color)'
   paper-item-icon-active-color: 'orange'
@@ -72,4 +78,4 @@ darkmix:
   paper-grey-200: 'var(--paper-card-background-color)'
   
 # Card background
-  card-background-color: ‘var(–primary-background-color)’ 
+  card-background-color: '#141A32'
