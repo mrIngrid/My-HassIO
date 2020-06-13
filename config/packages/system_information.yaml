@@ -69,4 +69,4 @@ logger:
   default: warn
   logs:
     homeassistant.bootstrap: info
-    pydaikin: critical
+
