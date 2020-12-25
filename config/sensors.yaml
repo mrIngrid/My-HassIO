@@ -127,7 +127,7 @@
     sensors:
       day_of_week:
         friendly_name: 'Giorno della settimana'
-        entity_id: sensor.time      
+
         value_template: '{% if now().weekday() in (0,) %} Lun {% elif now().weekday() in (1,) %} Mar  {% elif now().weekday() in (2,) %} Mer  {% elif now().weekday() in (3,) %} Gio {% elif now().weekday() in (4,) %} Ven {% elif now().weekday() in (5,) %} Sab {% elif now().weekday() in (6,) %} Dom{% endif %}'
 
   - platform: template
