@@ -39,22 +39,10 @@ sensor:
     - type: load_1m
     - type: load_5m
     - type: load_15m
-    
-- platform: dnsip
-
-- platform: uptime
-  name: Time Online
-  unit_of_measurement: hours 
-  
-- platform: command_line
-  name: HA Start
-  #icon: mdi:lastpass
-  command: grep -m1 'Home Assistant initialized' home-assistant.log | awk '{ print $6, $7, $8, $9, $10 }'
 
 - platform: command_line
   name: CPU Temperature
   command: "cat /sys/class/thermal/thermal_zone0/temp"
-  unit_of_measurement: "°C"
   value_template: '{{ value | multiply(0.001) | round(1) }}'
 
 speedtestdotnet:
@@ -64,6 +52,16 @@ speedtestdotnet:
     - ping
     - upload
     - download
+
+- platform: dnsip
+
+- platform: uptime
+  name: Time Online
+  
+- platform: command_line
+  name: HA Start
+  #icon: mdi:lastpass
+  command: grep -m1 'Home Assistant initialized' home-assistant.log | awk '{ print $6, $7, $8, $9, $10 }'
 
 logger:
   default: warn
