@@ -54,6 +54,7 @@ speedtestdotnet:
     - download
 
 - platform: dnsip
+  name: Time Online
 
 - platform: uptime
   name: Time Online
