@@ -1,0 +1,43 @@
+cards:
+  - entity: climate.daikinstylish
+    type: thermostat
+  - color_thresholds:
+      - color: '#f39c12'
+        value: 40
+      - color: '#d35400'
+        value: 50
+      - color: '#c0392b'
+        value: 51
+    entities:
+      - sensor.daikinstylish_inside_temperature
+    icon: 'mdi:temperature-celsius'
+    show:
+      labels: true
+    type: 'custom:mini-graph-card'
+  - color_thresholds:
+      - color: '#f39c12'
+        value: 0
+      - color: '#d35400'
+        value: 5
+      - color: '#c0392b'
+        value: 10
+    entities:
+      - sensor.daikinstylish_outside_temperature
+    icon: 'mdi:temperature-celsius'
+    show:
+      labels: true
+    type: 'custom:mini-graph-card'
+  - color_thresholds:
+      - color: '#f39c12'
+        value: 0
+      - color: '#d35400'
+        value: 5
+      - color: '#c0392b'
+        value: 10
+    entities:
+      - sensor.daikinstylish_humidity
+    icon: 'mdi:temperature-celsius'
+    show:
+      labels: true
+    type: 'custom:mini-graph-card'
+type: 'custom:vertical-stack-in-card'
