@@ -1,0 +1,55 @@
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: entity-filter
+        show_empty: false
+        state_filter:
+          - operator: '!='
+            value: None
+        entities:
+          - entity: sensor.termostato_x8000_humidity
+            name: Umidità
+            icon: 'mdi:water-percent'
+          - entity: input_select.x8000_program
+            name: Programma
+            icon: 'mdi:calendar-clock'
+          - entity: sensor.termostato_x8000_state
+            name: Stato
+          - entity: sensor.termostato_x8000_custom_mode
+            name: Mode
+          - entity: input_select.x8000_boost_mode
+          - entity: sensor.termostato_x8000_boost_mode
+          - entity: sensor.termostato_x8000_activation_time
+      - type: thermostat
+        entity: climate.x8000
+  - type: horizontal-stack
+    cards:
+      - color_thresholds:
+          - color: '#f39c12'
+            value: 40
+          - color: '#d35400'
+            value: 50
+          - color: '#c0392b'
+            value: 51
+        entities:
+          - entity: sensor.termostato_x8000_temperature
+            name: Temperatura X8000
+        icon: 'mdi:temperature-celsius'
+        show:
+          labels: true
+        type: 'custom:mini-graph-card'
+      - color_thresholds:
+          - color: '#f39c12'
+            value: 0
+          - color: '#d35400'
+            value: 5
+          - color: '#c0392b'
+            value: 10
+        entities:
+          - entity: sensor.termostato_x8000_humidity
+            name: Umidita X8000
+        icon: 'mdi:temperature-celsius'
+        show:
+          labels: true
+        type: 'custom:mini-graph-card'
