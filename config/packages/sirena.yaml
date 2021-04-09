@@ -1,0 +1,115 @@
+script:
+  sirena_allarme_on:
+    alias: 'Sirena on'
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: "zigbee2mqtt/Sirena/set"
+          payload: '{"alarm":true}'
+          
+  sirena_allarme_off:
+    alias: 'Sirena off'
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: "zigbee2mqtt/Sirena/set"
+          payload: '{"alarm":false}'
+#
+switch:
+  - platform: "mqtt"
+    name: Sirena
+    state_topic: "zigbee2mqtt/Sirena/set"
+    availability_topic: "zigbee2mqtt/bridge/state"
+    payload_off: '{"alarm":false}'
+    payload_on: '{"alarm":true}'
+    state_on: 'true'
+    state_off: 'false'
+    command_topic: "zigbee2mqtt/Sirena/set"
+
+input_select:
+  suoneria_sirena:
+    name: Suonerie Sirena
+    options:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+    icon: mdi:book-music
+    
+  volume_sirena:
+    name: Volume Sirena
+    options:
+      - low
+      - medium
+      - high
+    icon: mdi:volume-high
+
+input_number:
+  duration_sirena:
+    name: Durata Suoneria
+    min: 1
+    max: 120
+    step: 1
+    mode: slider
+
+automation:
+- alias: Sync Melodia Sirena
+  mode: restart
+  trigger:
+    platform: state
+    entity_id: input_select.suoneria_sirena
+  action:
+    service: mqtt.publish
+    data_template:
+      topic: "zigbee2mqtt/Sirena/set"
+      payload: >-
+        {
+          "melody":{{ states('input_select.suoneria_sirena') }}
+        }
+        
+- alias: Sync Volume Melodia Sirena
+  mode: restart
+  trigger:
+    platform: state
+    entity_id: input_select.volume_sirena
+  action:
+    service: mqtt.publish
+    data_template:
+      topic: "zigbee2mqtt/Sirena/set"
+      payload: >-
+        {
+          "volume":"{{ states('input_select.volume_sirena') }}"
+        }
+        
+- alias: Sync Duration Melodia Sirena
+  mode: restart
+  trigger:
+    platform: state
+    entity_id: input_number.duration_sirena
+  action:
+    service: mqtt.publish
+    data_template:
+      topic: "zigbee2mqtt/Sirena/set"
+      payload: >-
+        {
+          "duration":{{ states('input_number.duration_sirena') }}
+        }
+        
+        
+        
+        
+        
