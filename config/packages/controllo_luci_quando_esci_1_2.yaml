@@ -1,0 +1,124 @@
+input_boolean:
+  non_in_casa:
+    name: Non in casa
+    icon: mdi:account-tie
+
+automation:
+- id: orla_telegram_chk_luci_spegni
+  alias: "Telegram chk luci spegni"
+  initial_state: true
+  trigger:
+    platform: event
+    event_type: telegram_callback
+    event_data:
+      data: "/orla_telegram_chk_luci_spegni"
+  action:
+    - service: telegram_bot.answer_callback_query
+      data_template:
+        callback_query_id: "{{ trigger.event.data.id }}"
+        message: "OK ci penso io"
+    - service: telegram_bot.edit_replymarkup
+      data_template:
+        message_id: '{{ trigger.event.data.message.message_id }}'
+        chat_id: '{{ trigger.event.data.message.chat.id }}'
+        inline_keyboard: []
+    - service: script.orla_telegram_spegni_luci_rimaste_accese
+    - service: notify.telegram
+      data_template:
+        message: "OK ci ho pensato io, ho spento tutte le luci accese!"
+  
+- id: orla_telegram_chk_remove_keyboard
+  alias: "Telegram callback to remove keyboard"
+  initial_state: true
+  trigger:
+    platform: event
+    event_type: telegram_callback
+    event_data:
+      data: '/removekeyboard'
+  action:
+    - service: telegram_bot.answer_callback_query
+      data_template:
+        callback_query_id: '{{ trigger.event.data.id }}'
+        message: 'OK'
+    - service: telegram_bot.edit_replymarkup
+      data_template:
+        message_id: '{{ trigger.event.data.message.message_id }}'
+        chat_id: '{{ trigger.event.data.message.chat.id }}'
+        inline_keyboard: []  
+  
+#Automazione Boolean OnOff
+- alias: "Non in casa"
+  initial_state: 'on'
+  trigger:
+  - platform: template
+    value_template: >
+      {% set x = 'not_home' %}
+      {{ is_state('grpup.dispositivi_ingrid',x)
+       and is_state('group.dispositivi_sajde',x)}}
+  action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.non_in_casa     
+  - delay: "00:03:00"
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.non_in_casa
+
+- alias: "Spegni Luci Se Non In Casa"
+  initial_state: true
+  trigger:
+  - platform: state
+    entity_id: input_boolean.non_in_casa 
+    from: 'off'
+    to: 'on' 
+  action:
+    - service: homeassistant.turn_off
+      entity_id: group.luci_casa
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.non_in_casa
+    - service: notify.telegram
+      data:
+        title: '💡*Illuminazione*💡'
+        message: >-
+            {%- macro controllo_luci() -%}
+            {%- for item in expand(states['light']) if (item.name not in exclusions and item.entity_id not in exclusions and item.state == 'on') %}
+            
+            💡 {{ item.name}}
+            {%- endfor -%}
+            {%- endmacro -%}
+            {%- set elenco_luci = controllo_luci() -%}
+            {% if elenco_luci |trim == "" %}
+            
+            Tutti le luci sono spente
+            {% else %}
+            
+            Non ho rilevato più nessuno a 🏠 e volevo avvisarti che le seguenti 💡 sono rimaste accese:
+            {{ elenco_luci }}
+            {% endif %}
+        data:
+          inline_keyboard:             
+            - '💡 Spegni Luci:/orla_telegram_chk_luci_spegni'            
+                    
+script:
+  orla_telegram_spegni_luci_rimaste_accese:
+    sequence:
+      - service: light.turn_off
+        data_template:
+          entity_id: >
+            {%- macro controllo_luci() -%}
+            {% for item in expand(states['light']) if (item.name not in exclusions and item.entity_id not in exclusions and item.state == 'on') -%}{{ item.entity_id}}{%- if not loop.last %}, {% endif %}
+            {%- endfor -%}
+            {%- endmacro -%}
+            {{ controllo_luci() }}
+
+
+#  dss_alarm_script_invia_notifiche_telegram_con_keyboard:
+#    sequence:
+#      - service: notify.telegram
+#        data_template: 
+#          message: "{{ message }}"
+#          data:
+#              inline_keyboard: 
+#                - '{% if elenco_luci_accese | trim != "" and elenco_clima_accesi | trim != "" %}Spegni luci:/orla_telegram_chk_luci_spegni {% elif elenco_clima_accesi | trim != "" %}{{ "\U00002744" }} Spegni clima:/orla_telegram_chk_clima_spegni {% else %}{{ "\U00002744" }} Luci e Climatizzatori spenti:/removekeyboard{% endif %}'
+
+        
+#        'Non ho rilevato nessuno a 🏠 e ti ho spento le 💡'
+#        target: !secret allowed_chat_ids  
